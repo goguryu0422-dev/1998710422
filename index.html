@@ -1,0 +1,819 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>증권사 내부통제 주간 동향</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: 감독 동향 레지스터 — 4개 지표 타일 → 5×5 위험 매트릭스와 점검 현황 → 상세 패널(항목마다 위험도 근거·당사 점검) */
+:root{
+  --bg:#F3F5F4; --surface:#FFFFFF; --ink:#1A2220; --muted:#5A6561; --line:#DCE1DE;
+  --accent:#2B4C7E; --accent-soft:#E6ECF5;
+  --crit:#B3261E; --crit-soft:#FBE9E7; --high:#B4530A; --high-soft:#FCEBDD; --mid:#8A6A00; --mid-soft:#F7EFD2; --low:#3E7A4F; --low-soft:#E5F2E8; --none:#7A8580; --none-soft:#ECEFED;
+  --font-body:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+  --font-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#111513; --surface:#191F1C; --ink:#E5EAE7; --muted:#9BA6A0; --line:#2B3430;
+  --accent:#93B2E6; --accent-soft:#1F2A3B;
+  --crit:#F08A80; --crit-soft:#3A1F1C; --high:#F2A65A; --high-soft:#3A2614; --mid:#E2C255; --mid-soft:#332C12; --low:#86C79A; --low-soft:#1B3022; --none:#8C9792; --none-soft:#232A27; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#111513; --surface:#191F1C; --ink:#E5EAE7; --muted:#9BA6A0; --line:#2B3430;
+  --accent:#93B2E6; --accent-soft:#1F2A3B;
+  --crit:#F08A80; --crit-soft:#3A1F1C; --high:#F2A65A; --high-soft:#3A2614; --mid:#E2C255; --mid-soft:#332C12; --low:#86C79A; --low-soft:#1B3022; --none:#8C9792; --none-soft:#232A27; color-scheme:dark}
+body{background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:15px;line-height:1.6}
+.wrap{max-width:1120px;margin:0 auto;padding-block:18px 36px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:14px}
+header{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:12px;border-bottom:2px solid var(--ink);padding-bottom:10px}
+header h1{margin:0;font-size:clamp(22px,3.2vw,30px);font-weight:700;letter-spacing:-.01em;text-wrap:balance}
+.kicker{font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.period{font-family:var(--font-mono);font-size:13px;color:var(--muted);text-align:right}
+.period b{color:var(--ink);font-weight:500}
+.tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+@media (max-width:860px){.tiles{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.tile{background:var(--surface);border:1px solid var(--line);border-top:3px solid var(--line);padding:10px 14px 12px;display:grid;gap:2px;align-content:start}
+.tile.on{border-top-color:var(--accent)}
+.tile .code{font-family:var(--font-mono);font-size:12px;color:var(--muted)}
+.tile .lab{font-weight:600;font-size:14px;line-height:1.35;min-height:2.7em}
+.num{all:unset;cursor:pointer;font-family:var(--font-mono);font-weight:500;font-size:40px;line-height:1.05;color:var(--accent);font-variant-numeric:tabular-nums;text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:6px;text-decoration-color:var(--accent-soft);width:fit-content}
+.num:hover{text-decoration-color:var(--accent)}
+.num:focus-visible{outline:2px solid var(--accent);outline-offset:4px}
+.tile .hint{font-size:12px;color:var(--muted)}
+.mix{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+.pill{font-size:11.5px;font-weight:600;padding:1px 8px;border-radius:999px;white-space:nowrap}
+.p-crit{color:var(--crit);background:var(--crit-soft)} .p-high{color:var(--high);background:var(--high-soft)} .p-mid{color:var(--mid);background:var(--mid-soft)} .p-low{color:var(--low);background:var(--low-soft)} .p-none{color:var(--none);background:var(--none-soft)}
+.panel{background:var(--surface);border:1px solid var(--line);padding:14px 18px;display:grid;gap:10px;min-width:0}
+.panel-head{display:flex;flex-wrap:wrap;gap:6px 16px;align-items:baseline;justify-content:space-between}
+.panel-head h2{margin:0;font-size:19px;font-weight:700}
+.panel-head p{margin:0;color:var(--muted);font-size:13px;flex-basis:100%}
+.filters{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:inherit;font-size:12.5px;border:1px solid var(--line);background:transparent;color:var(--muted);padding:3px 10px;border-radius:4px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.chip:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.list{display:grid;gap:8px}
+.item{border:1px solid var(--line);border-left:4px solid var(--line);padding:10px 14px;display:grid;gap:4px;min-width:0;scroll-margin-top:16px}
+.item.sev-crit{border-left-color:var(--crit)} .item.sev-high{border-left-color:var(--high)} .item.sev-mid{border-left-color:var(--mid)} .item.sev-low{border-left-color:var(--low)} .item.sev-none{border-left-color:var(--none)}
+.item.flash{box-shadow:0 0 0 2px var(--accent)}
+.meta{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;font-size:12.5px;color:var(--muted)}
+.meta .date{font-family:var(--font-mono);color:var(--ink)}
+.meta .id{font-family:var(--font-mono)}
+.tag{border:1px solid var(--line);padding:0 7px;border-radius:3px}
+.item h3{margin:0;font-size:15.5px;font-weight:600;line-height:1.45;text-wrap:balance}
+.item p{margin:0;max-width:75ch}
+.imp{font-size:13.5px;color:var(--muted)} .imp b{color:var(--ink);font-weight:600}
+.src{font-size:12.5px;display:flex;flex-wrap:wrap;gap:4px 12px}
+.src a{color:var(--accent)}
+.acts{margin:2px 0 0;padding-left:20px;display:grid;gap:3px;max-width:80ch}
+.links{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:12.5px;color:var(--muted)}
+.ref{font:inherit;font-family:var(--font-mono);font-size:12px;border:1px solid var(--accent);color:var(--accent);background:var(--accent-soft);padding:0 7px;border-radius:3px;cursor:pointer}
+.ref:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.kpi{font-size:13px;background:var(--bg);padding:6px 10px;border-radius:3px}
+.kpi b{font-weight:600}
+.empty{color:var(--muted);font-size:14px}
+.query{display:flex;flex-wrap:wrap;align-items:flex-end;gap:8px 14px;background:var(--surface);border:1px solid var(--line);padding:10px 14px}
+.query label{display:grid;gap:3px;font-size:12px;color:var(--muted)}
+.query input{font:inherit;font-family:var(--font-mono);font-size:14px;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:4px;padding:6px 8px;min-height:36px}
+.query input:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.query .sep{padding-bottom:8px;color:var(--muted)}
+.qbtn{font:inherit;font-weight:600;font-size:14px;background:var(--accent);color:var(--surface);border:1px solid var(--accent);border-radius:4px;padding:7px 18px;min-height:36px;cursor:pointer}
+.qbtn.ghost{background:transparent;color:var(--accent)}
+.qbtn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.qmsg{font-size:12.5px;color:var(--muted);flex-basis:100%}
+.qmsg.err{color:var(--high)}
+/* 위험 매트릭스: 기본은 접힌 요약 막대, 누르면 펼침 */
+.riskwrap>summary{list-style:none;cursor:pointer;display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;background:var(--surface);border:1px solid var(--line);padding:8px 14px;font-size:14px}
+.riskwrap>summary::-webkit-details-marker{display:none}
+.riskwrap>summary:hover{border-color:var(--accent)}
+.riskwrap>summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.rw-t{font-weight:600}
+.rw-s{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:12.5px;color:var(--muted)}
+.rw-h{margin-left:auto;font-size:12.5px;color:var(--accent);font-weight:600;white-space:nowrap}
+.riskwrap[open]>.risk{margin-top:8px}
+.risk{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:14px}
+@media (max-width:860px){.risk{grid-template-columns:minmax(0,1fr)}}
+.rbox{background:var(--surface);border:1px solid var(--line);padding:12px 16px;display:grid;gap:8px;align-content:start;min-width:0}
+.rbox h2{margin:0;font-size:16px;font-weight:700}
+.rbox .sub{margin:0;font-size:12.5px;color:var(--muted)}
+.mx-wrap{overflow-x:auto}
+.mx{display:grid;grid-template-columns:auto 22px repeat(5,minmax(44px,1fr));gap:3px;min-width:320px;font-size:12px}
+.mx .ax{color:var(--muted);display:flex;align-items:center;justify-content:flex-end;padding-right:4px;white-space:nowrap}
+.mx .axn{font-family:var(--font-mono);color:var(--muted);display:flex;align-items:center;justify-content:center}
+.mx .axb{font-family:var(--font-mono);color:var(--muted);text-align:center;line-height:1.3;padding-top:2px}
+.mx .ytitle{grid-column:1 / span 2;color:var(--muted);white-space:nowrap}
+.mx .xtitle{grid-column:3 / span 5;text-align:center;color:var(--muted);padding-top:2px}
+.cell{font:inherit;border:1px solid transparent;min-height:38px;display:grid;place-items:center;position:relative;cursor:default;color:var(--ink);padding:0}
+.cell .sc{position:absolute;top:2px;left:4px;font-family:var(--font-mono);font-size:10px;color:var(--muted)}
+.cell .ct{font-family:var(--font-mono);font-weight:500;font-size:18px;font-variant-numeric:tabular-nums}
+.cell.z-low{background:var(--low-soft)} .cell.z-mid{background:var(--mid-soft)} .cell.z-high{background:var(--high-soft)} .cell.z-crit{background:var(--crit-soft)}
+.cell.has{cursor:pointer;border-color:var(--line)}
+.cell.has.z-low .ct{color:var(--low)} .cell.has.z-mid .ct{color:var(--mid)} .cell.has.z-high .ct{color:var(--high)} .cell.has.z-crit .ct{color:var(--crit)}
+.cell.has:hover{border-color:var(--ink)}
+.cell.sel{outline:2px solid var(--ink);outline-offset:-2px}
+.cell:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.cell:not(.has) .ct{color:var(--line)}
+.bands{display:grid;gap:3px;margin:0;padding:0;list-style:none;font-size:13px}
+.bands li{display:grid;grid-template-columns:96px minmax(0,1fr);gap:8px;align-items:baseline}
+.bands .pill{justify-self:start}
+.prog{display:grid;gap:5px}
+.bar{display:flex;height:10px;background:var(--bg);border:1px solid var(--line);overflow:hidden}
+.bar span{display:block;height:100%}
+.bar .b-ok{background:var(--low)} .bar .b-gap{background:var(--high)} .bar .b-na{background:var(--none)}
+.legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12.5px;color:var(--muted)}
+.legend i{display:inline-block;width:9px;height:9px;margin-right:5px;vertical-align:0}
+.dbnote{font-size:12.5px;color:var(--muted);margin:0}
+details.crit{font-size:13px}
+details.crit summary{cursor:pointer;color:var(--accent);font-weight:600}
+details.crit table{border-collapse:collapse;width:100%;margin-top:8px}
+details.crit th,details.crit td{border-top:1px solid var(--line);padding:5px 6px;text-align:left;vertical-align:top}
+details.crit th{font-weight:600;white-space:nowrap}
+details.crit td.n{font-family:var(--font-mono);white-space:nowrap}
+.tbl{overflow-x:auto}
+.sortrow{display:flex;gap:6px;align-items:center;font-size:12.5px;color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.score{font-family:var(--font-mono);font-size:12px;color:var(--muted)}
+.adj{font-size:11.5px;color:var(--accent)}
+/* 항목별 당사 점검 */
+details.chk{border-top:1px dashed var(--line);padding-top:6px}
+details.chk>summary{cursor:pointer;display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;font-size:13.5px;font-weight:600;color:var(--accent);list-style:none}
+details.chk>summary::-webkit-details-marker{display:none}
+details.chk>summary::before{content:"+";font-family:var(--font-mono);width:12px}
+details.chk[open]>summary::before{content:"−"}
+details.chk>summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.cstat{font-weight:400;font-size:12.5px;color:var(--muted)}
+.cstat b{font-weight:600}
+.cstat .g{color:var(--high)}
+.chk-body{display:grid;gap:10px;padding:8px 0 2px}
+.why{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+@media (max-width:640px){.why{grid-template-columns:minmax(0,1fr)}}
+.why div{background:var(--bg);padding:10px 12px;display:grid;gap:4px;min-width:0}
+.why .h{font-size:12px;color:var(--muted);display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.why .h b{font-family:var(--font-mono);color:var(--ink);font-weight:500}
+.why select{font:inherit;font-size:12px;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:3px;padding:1px 4px}
+.why p{margin:0;font-size:13.5px}
+.lab2{font-size:12px;color:var(--muted);font-weight:600;letter-spacing:.02em}
+.regs{display:flex;flex-wrap:wrap;gap:6px}
+.regs span{font-size:12.5px;border:1px solid var(--line);padding:1px 8px;border-radius:3px;background:var(--surface)}
+.qs{margin:0;padding:0;list-style:none;display:grid;gap:6px;counter-reset:q}
+.qs li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 12px;align-items:center;border:1px solid var(--line);padding:6px 10px;counter-increment:q}
+@media (max-width:640px){.qs li{grid-template-columns:minmax(0,1fr)}}
+.qs li>span:first-child::before{content:counter(q)". ";font-family:var(--font-mono);color:var(--muted)}
+.qs li.st-ok{border-left:3px solid var(--low)} .qs li.st-gap{border-left:3px solid var(--high)} .qs li.st-na{opacity:.75}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:4px;overflow:hidden}
+.seg button{font:inherit;font-size:12px;border:0;border-left:1px solid var(--line);background:transparent;color:var(--muted);padding:3px 9px;cursor:pointer;white-space:nowrap}
+.seg button:first-child{border-left:0}
+.seg button:disabled{cursor:default}
+.seg button[aria-pressed="true"].v-ok{background:var(--low);color:var(--surface)}
+.seg button[aria-pressed="true"].v-gap{background:var(--high);color:var(--surface)}
+.seg button[aria-pressed="true"].v-na{background:var(--none);color:var(--surface)}
+.seg button:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.kv{display:grid;grid-template-columns:96px minmax(0,1fr);gap:4px 10px;font-size:13.5px;margin:0}
+.kv dt{color:var(--muted);font-size:12.5px}
+.kv dd{margin:0}
+.note{display:grid;gap:4px}
+.note textarea{font:inherit;font-size:13.5px;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:4px;padding:8px;min-height:64px;resize:vertical;width:100%;box-sizing:border-box}
+.note textarea:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.foot{font-size:12px;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 12px}
+.foot .err{color:var(--crit)}
+footer{font-size:12.5px;color:var(--muted);display:grid;gap:2px;border-top:1px solid var(--line);padding-top:10px}
+@media (prefers-reduced-motion:no-preference){.item{transition:box-shadow .3s}}
+</style>
+
+<div class="wrap">
+  <header>
+    <div>
+      <div class="kicker">Internal Control Weekly · 증권업</div>
+      <h1>증권사 내부통제 주간 동향</h1>
+    </div>
+    <div class="period">조회 기간 <b id="period-label"></b><br>금융위 · 금감원 · 거래소 · 국회 · 언론 · 협회<br>자료 갱신 <span id="updated"></span></div>
+  </header>
+
+  <form class="query" id="query" aria-label="조회 기간">
+    <label for="q-from">시작일<input type="date" id="q-from" required></label>
+    <span class="sep">~</span>
+    <label for="q-to">종료일<input type="date" id="q-to" required></label>
+    <button type="submit" class="qbtn">조회</button>
+    <button type="button" class="qbtn ghost" id="q-reset">최근 3일</button>
+    <p class="qmsg" id="q-msg"></p>
+  </form>
+
+  <section class="tiles" aria-label="요약 지표">
+    <div class="tile" data-sec="sanctions"><span class="code">01</span><span class="lab">내부통제 관련 제재·감독 조치</span><button class="num" id="n-sanctions" aria-controls="panel"></button><span class="hint">숫자를 누르면 목록이 열립니다</span><div class="mix" id="m-sanctions"></div></div>
+    <div class="tile" data-sec="issues"><span class="code">02</span><span class="lab">언론 등 내부통제 이슈</span><button class="num" id="n-issues" aria-controls="panel"></button><span class="hint">숫자를 누르면 목록이 열립니다</span><div class="mix" id="m-issues"></div></div>
+    <div class="tile" data-sec="laws"><span class="code">03</span><span class="lab">법규 개정 사항</span><button class="num" id="n-laws" aria-controls="panel"></button><span class="hint">숫자를 누르면 목록이 열립니다</span><div class="mix" id="m-laws"></div></div>
+    <div class="tile" data-sec="actions"><span class="code">04</span><span class="lab">내부통제 해결 방안</span><button class="num" id="n-actions" aria-controls="panel"></button><span class="hint">숫자를 누르면 목록이 열립니다</span><div class="mix" id="m-actions"></div></div>
+  </section>
+
+  <details class="riskwrap" id="riskwrap">
+    <summary><span class="rw-t">위험 매트릭스 · 등급별 대응 · 점검 현황</span><span class="rw-s" id="risk-sum"></span><span class="rw-h">펼치기</span></summary>
+  <section class="risk" aria-label="위험 매트릭스와 당사 점검 현황">
+    <div class="rbox">
+      <h2>위험 매트릭스</h2>
+      <p class="sub">조회 기간의 01~03 항목을 심각도 × 발생가능성으로 놓았습니다. 칸의 숫자를 누르면 해당 항목만 봅니다.</p>
+      <div class="mx-wrap"><div class="mx" id="mx" role="grid" aria-label="심각도와 발생가능성 매트릭스"></div></div>
+      <div class="legend"><span><i style="background:var(--crit)"></i>심각 16~25</span><span><i style="background:var(--high)"></i>높음 10~15</span><span><i style="background:var(--mid)"></i>중간 5~9</span><span><i style="background:var(--low)"></i>낮음 1~4</span></div>
+    </div>
+    <div class="rbox">
+      <h2>등급별 대응</h2>
+      <ul class="bands">
+        <li><span class="pill p-crit">심각 16~25</span><span>경영진·이사회에 즉시 보고하고 전담 대응합니다. 매일 진행 상황을 확인합니다.</span></li>
+        <li><span class="pill p-high">높음 10~15</span><span>준법감시인·CRO에 보고하고 개선 계획을 세웁니다. 매주 점검합니다.</span></li>
+        <li><span class="pill p-mid">중간 5~9</span><span>담당자를 정해 통제를 보완합니다. 매월 점검합니다.</span></li>
+        <li><span class="pill p-low">낮음 1~4</span><span>기록해 두고 분기 점검 때 다시 봅니다.</span></li>
+      </ul>
+      <div class="prog">
+        <div class="lab2">당사 점검 현황 · 조회 기간 항목 기준</div>
+        <div class="bar" id="pbar" aria-hidden="true"></div>
+        <div class="legend" id="plegend"></div>
+        <p class="dbnote" id="dbnote"></p>
+      </div>
+      <details class="crit">
+        <summary>평가 기준 보기</summary>
+        <div class="tbl"><table>
+          <thead><tr><th>점수</th><th>심각도 (당사에서 같은 일이 생기면)</th></tr></thead>
+          <tbody id="crit-s"></tbody>
+        </table></div>
+        <div class="tbl"><table>
+          <thead><tr><th>점수</th><th>발생가능성 (당사에서 현실화·적발될 가능성)</th></tr></thead>
+          <tbody id="crit-l"></tbody>
+        </table></div>
+        <p class="dbnote">점수는 리테일·PB·채권·신용공여·IB 업무를 모두 하는 일반적인 종합 증권사를 가정한 기본값입니다. 당사 업무 범위와 맞지 않으면 항목의 ‘당사 기준’에서 점수를 바꾸세요. 바꾼 점수가 매트릭스와 등급에 반영됩니다.</p>
+      </details>
+    </div>
+  </section>
+  </details>
+
+  <section class="panel" id="panel" aria-live="polite">
+    <div class="panel-head">
+      <h2 id="p-title"></h2>
+      <div class="filters" id="filters"></div>
+      <p id="p-desc"></p>
+    </div>
+    <div class="list" id="list"></div>
+  </section>
+
+  <footer>
+    <span>공개된 보도자료·기사·국정감사 자료를 바탕으로 정리했습니다. 수치와 사실관계는 각 항목의 출처 링크에서 원문을 확인하세요.</span>
+    <span>해결 방안은 공개 자료 기반의 일반 권고안입니다. 당사 사규·내부통제기준에 반영할 때는 소관 부서 검토를 거치세요.</span>
+    <span>위험도 점수와 근거 법규는 검토 출발점입니다. 법적 판단이 아니므로 현행 조문과 대조하고 소관 부서·법무 검토를 거치세요. 해결 방안의 우선순위는 연결된 항목 중 가장 높은 위험 등급을 따릅니다.</span>
+    <span>점검 기록과 메모는 이 페이지를 볼 수 있는 사람과 공유됩니다. 사규 원문이나 고객 정보는 적지 마세요.</span>
+    <span>목록은 최신 일자 순입니다. 법규 개정은 게시일이 조회 기간에 들거나, 의견 제출 기간이 조회 기간과 겹치면 표시합니다. 해결 방안은 조회 기간에 표시된 항목과 연결된 것만 보여 줍니다.</span>
+  </footer>
+</div>
+
+<script>
+/* ===== DATA START: 자동 갱신 작업이 이 블록만 수정합니다 ===== */
+const UPDATED="2026-10-21 09:50";
+const DATA_FROM="2026-09-15";
+const SEV={high:"높음",mid:"중간",low:"참고"};
+const DATA={
+ sanctions:{title:"01 내부통제 관련 제재·감독 조치",desc:"금융위·금감원·거래소의 제재와 검사, 국회 국정감사 지적, 정부 당국의 지시·당부 사항입니다.",items:[
+  {id:"S1",date:"2026-10-15",org:"금감원",type:"제재",sev:"high",title:"하나증권, 리테일 채권 불완전판매로 과태료 3억 3,700만원",
+   body:"2022.10~2024.4 기간에 투자목적·재산상황을 확인하지 않고 9,870만원 채권을 권유했고, 초저위험만 가능한 안정형 고객에게 4등급 채권 1억 1,690만원을 판매했습니다. 5개 지점은 9차례 19억 6,500만원어치를 팔면서 위험등급 의미와 위험요인 설명을 빠뜨렸습니다.",
+   imp:"채권 리테일 판매에서 적합성 확인과 설명의무 이행 증빙이 다시 검사 포인트가 됐습니다.",
+   src:[["아시아경제","https://view.asiae.co.kr/article/2026101517212818012"],["인사이트코리아","https://www.insightkorea.co.kr/news/articleView.html?idxno=256537"]]},
+  {id:"S2",date:"2026-10-20",org:"국회",type:"국감 지적",sev:"high",title:"10대 증권사 임직원 자기매매 규정 위반 97명 제재, 30.9%는 퇴직 후 통보",
+   body:"2021년~2026년 8월 금감원 자료(김현정 의원)입니다. 최대 투자원금은 88억 5천만원이었고, 재직자 67명 중 면직은 없었습니다. 과태료 중앙값은 약 450만원으로 법정 상한(5천만원)보다 크게 낮았습니다.",
+   imp:"사후 적발 구조로는 퇴직자에게 실효적 조치가 어렵다는 지적입니다. 상시 매매 모니터링 요구가 커질 전망입니다.",
+   src:[["금융소비자뉴스","https://www.newsfc.co.kr/news/articleView.html?idxno=81857"],["SBS Biz","https://biz.sbs.co.kr/article/20000340902"]]},
+  {id:"S3",date:"2026-10-20",org:"국회",type:"국감 지적",sev:"mid",title:"금융권 전산장애 1,736건 중 증권업 465건, 당국 제재는 38건",
+   body:"2022.1~2026.8 금감원 보고 기준(민병덕 의원)입니다. 증권업은 은행(565건)에 이어 두 번째로 많았고, 같은 기간 제재는 38건, 과태료는 총 21억 3,220만원이었습니다.",
+   imp:"반복 장애의 원인 점검, 복구 체계, 소비자 보호 절차를 함께 보라는 요구입니다.",
+   src:[["핀포인트뉴스","https://www.pinpointnews.co.kr/news/articleView.html?idxno=496806"]]},
+  {id:"S4",date:"2026-10-19",org:"국회",type:"국감 지적",sev:"mid",title:"단일종목 레버리지 ETF, 거래소 예비심사 전에 금감원 심사 진행",
+   body:"금감원 국감에서 심사 순서가 쟁점이 됐습니다. 금감원장은 금융위가 발표한 상장 일정에 맞추려 심사를 빨리 진행한 측면이 있다고 답했고, 증권신고서를 15일간 심사했다고 밝혔습니다.",
+   imp:"고위험 신상품 출시 과정의 검토 충실성이 감독기관과 판매사 모두에 대해 도마에 올랐습니다.",
+   src:[["한국금융신문","https://www.fntimes.com/html/view.php?ud=202610191417538926179ad43907_18"],["CBC뉴스","https://www.cbci.co.kr/news/articleView.html?idxno=617307"]]},
+  {id:"S5",date:"2026-10-19",org:"국회",type:"국감 지적",sev:"mid",title:"증권사 14곳 단일종목 레버리지 자기매매 9억 순손실, 개인 손실 자료는 검증 지연",
+   body:"5.27~8.31 기간 매수 1,423억원, 매도 1,414억원이었습니다(박준태 의원). 개인투자자 손실 자료는 건수가 많고 일부 회사 자료에서 오류가 발견돼 검증 후 별도 제출될 예정입니다.",
+   imp:"감독기관 제출 자료의 정확성 자체가 내부통제 이슈로 번질 수 있습니다.",
+   src:[["아주경제","https://www.ajunews.com/view/20261019130839503"]]},
+  {id:"S6",date:"2026-10-16",org:"금감원",type:"검사",sev:"high",title:"대형 증권사 PB 영업 현장검사 확대, 미래에셋 연장·한국투자증권 착수 예정",
+   body:"과당매매, 임의매매, 고위험상품 적합성, 고액 PB에 대한 본사 감사·이상거래 감시가 점검 대상입니다. 미래에셋은 전문투자자 신규 등록이 월평균 109건에서 6월 734건으로 늘어난 경위를 확인 중입니다(등록 증가만으로 위법은 아닙니다).",
+   imp:"앞선 지점 검사에서 무단 신용정보 조회, 과당매매, 개인 휴대전화 영업 등이 지적됐습니다.",
+   src:[["녹색경제신문","https://greened.kr/news/articleView.html?idxno=352261"]]},
+  {id:"S7",date:"2026-10-14",org:"금융위",type:"당국 조치",sev:"high",title:"금융권 침해사고 제2차 긴급회의, 16개 금융회사 AI 연계 해킹 확인",
+   body:"금융위·금감원은 AI 연계 해킹이 16개 금융회사에서 확인됐고 개인정보 약 10만건이 유출됐다고 보고했습니다. 앞서 1차 회의에서는 임직원·대출모집인·위탁업체를 포함한 외부 접속점 전수 점검과 최소 권한 원칙을 지시했습니다.",
+   imp:"공유된 공격 정보에 대응하지 않은 회사는 엄정 조치 대상이라고 예고됐습니다.",
+   src:[["MTN","https://news.mtn.co.kr/article/2026101415172164477"],["아이뉴스24(1차 회의)","https://inews24.com/view/2011718"]]},
+  {id:"S8",date:"2026-10-15",org:"금융위",type:"당국 당부",sev:"mid",title:"증시 급락 유관기관 긴급점검회의, 증권사에 무분별한 신용공여 자제 당부",
+   body:"코스피·코스닥이 서킷브레이커가 걸릴 만큼 급락하자 금융위원장 주재로 금감원·거래소가 참석한 회의가 열렸습니다. 증권사에는 고객 보호와 위험 관리에 힘써 달라고 요청했습니다.",
+   imp:"신용융자·미수 관리 체계가 당국의 우선 점검 대상이 될 가능성이 큽니다.",
+   src:[["MTN","https://news.mtn.co.kr/article/2026101515292252041"]]},
+  {id:"S9",date:"2026-10-18",org:"금감원",type:"경영유의",sev:"mid",title:"신한투자증권, 해외주식 가산수수료·이벤트 관련 경영유의 4건·개선 1건",
+   body:"종목추천 서비스 가입 고객에게 추천 종목 거래 여부와 관계없이 모든 해외주식 거래에 최대 0.25%p를 더 받았고, 매매명세서에서 기본·가산 수수료를 구분하지 않았습니다. 2023.9~2025.12 해외주식 거래금액 비례 현금 이벤트는 동일인 보상한도와 이해상충 사전 검토가 부족했다는 지적입니다.",
+   imp:"수수료 구조와 고객 고지, 판촉 이벤트의 이해상충 검토가 검사 지적 사항이 됐습니다. 회사는 서비스를 5월 무료 전환했고 12월 종료할 예정입니다.",
+   src:[["중앙이코노미뉴스","https://www.joongangenews.com/news/articleView.html?idxno=555868"]]},
+  {id:"S10",date:"2026-10-21",org:"금감원",type:"제재 예고",sev:"high",title:"해킹 피해 은행 CEO, 책무구조도 내부통제 관리의무 첫 제재 대상 거론",
+   body:"금감원이 신한·KB국민은행 현장검사 중이며, 지배구조법상 CEO의 내부통제 관리의무 위반을 잠정 판단한 것으로 보도됐습니다. 2024년 금감원 가이드라인은 위반이 중대하고 관리의무 미이행, 장기·반복 위반, 대규모 고객 피해 등 8개 요소 중 하나 이상에 해당할 때 CEO를 제재하도록 정하고 있습니다.",
+   imp:"은행 사례지만 책무구조도를 운영 중인 증권사에도 정보보호 사고 시 대표이사 관리의무가 직접 쟁점이 될 수 있다는 선례입니다.",
+   src:[["머니투데이","https://www.mt.co.kr/finance/2026/10/21/2026102019470931761"]]},
+  {id:"S11",date:"2026-10-19",org:"국회",type:"국감 지적",sev:"mid",title:"금융사고 발생 30일 넘게 몰랐던 사례 91건, 17건은 1년 이상",
+   body:"2022년~2026년 8월 금감원에 보고된 전자금융·침해 사고 2,189건 중 43개사 91건이 발생 30일 이후에야 발견됐습니다(김형연 의원). 지연 발견 사고의 89%(81건)는 해킹이 아닌 전산 프로그램 오류였습니다.",
+   imp:"사고 탐지 지연은 보고 의무 위반과 피해 확대로 이어집니다. 프로그램 오류에 대한 사후 검증 체계가 쟁점입니다.",
+   src:[["데일리안","https://www.dailian.co.kr/news/view/1702961/2026-%EA%B5%AD%EA%B0%90-%EC%82%AC%EA%B3%A0-%ED%84%B0%EC%A0%B8%EB%8F%84-%E2%80%98%EA%B9%9C%EA%B9%9C%EC%9D%B4%ED%95%9C-2026"]]},
+  {id:"S12",date:"2026-09-18",org:"금융위",type:"기관 제재",sev:"high",title:"랩·신탁 위법거래 중개, 다올투자증권 기관경고·BNK투자증권 기관주의",
+   body:"금융위는 9월 9일 정례회의에서 제재를 의결했습니다. 두 회사는 채권형 랩·특정금전신탁 관련 위법거래 약 3만 2천건, 약 159조원을 중개했습니다. KOFR보다 낮은 비정상 금리의 채권 스왑으로 위법거래를 감췄고, 장외 단기채에 금지된 보증을 제공했습니다. 다올은 과태료 12억원·임원 견책 1명·주의 3명, BNK는 과태료 10억원·견책 1명·주의 1명입니다.",
+   imp:"계좌 간 채권 거래 가격의 적정성과 손실보전 회피용 연계거래를 탐지하는 통제가 핵심입니다. 다올은 상근임원의 영리 겸직 위반도 함께 지적됐습니다.",
+   src:[["뉴시스","https://www.newsis.com/view/NISX20260918_0003795070"]]},
+  {id:"S13",date:"2026-09-21",org:"금감원",type:"당국 지시",sev:"mid",title:"금감원, 21개 증권사 준법감시인 소집해 과도한 신용·미수 유도와 비용 전가 지적",
+   body:"종합금융투자사업자 10곳과 중형사 11곳의 준법감시인이 참석했습니다. 금감원은 신용·미수거래 유도, 수수료·비용 전가, 일부 지점의 과당매매·임의매매·고객 신용정보 무단 조회를 지적했습니다. 투자자 보호 KPI 도입, 해외투자 이벤트·광고 통제, 소비자보호책임자(CCO)의 신상품·성과평가 재검토 요청권, 준법감시의 2차 점검을 요구했습니다.",
+   imp:"준법감시 조직이 상품 기획 단계부터 레드팀 역할을 하라는 주문입니다.",
+   src:[["파이낸셜뉴스","https://www.fnnews.com/news/202609210905593514"]]},
+  {id:"S14",date:"2026-09-29",org:"금감원",type:"당국 당부",sev:"mid",title:"금감원장, 23개 증권사 CEO에 투자자 보호 직접 관리와 종목별 신용한도 운영 요구",
+   body:"금감원장은 허위·과장광고, 투자자 수요와 맞지 않는 상품 설계, 고객에게 전가되는 숨은 수수료를 지적하고 검사를 집중하겠다고 밝혔습니다. 신용융자 잔고는 2024년 말 15조 8천억원에서 2026년 6월 37조 3천억원까지 늘었습니다. 종목별 한도와 자기자본 대비 한도를 엄격히 운영하라고 했습니다.",
+   imp:"CEO가 투자자 보호에 쓰는 관심과 자원에 따라 보호 수준이 다르다는 점을 들어 경영진 책임을 강조했습니다.",
+   src:[["파이낸셜뉴스","https://www.fnnews.com/news/202609291021032111"]]},
+  {id:"S15",date:"2026-10-02",org:"금융위",type:"당국 지시",sev:"mid",title:"은행 고객정보 유출 후 금융위, 증권사 포함 전 금융권에 해킹 자체 점검 지시",
+   body:"금융위는 10월 1일 신한은행 침해 유형, 대응 방법, 예방 점검 항목을 전 금융회사에 보내고 해킹 방지 체계와 고객정보 유출 여부를 자체 점검하라고 요청했습니다. 미래에셋·NH투자·삼성·한국투자·KB증권은 이상이 없다고 보고했습니다.",
+   imp:"점검 결과를 증빙으로 남겨야 이후 검사·제재 때 관리의무 이행을 입증할 수 있습니다.",
+   src:[["머니투데이","https://www.mt.co.kr/stock/2026/10/02/2026100210531031174"]]},
+  {id:"S16",date:"2026-10-04",org:"금융위",type:"당국 조치",sev:"high",title:"금융위, 전 금융권 긴급회의 열고 외부 접속점 전수 점검·최소 권한 지시",
+   body:"유출이 저축은행·캐피탈로 번지자 회의를 10월 7일에서 앞당겼습니다. 임직원·대출모집인·위탁업체 등 외부 접속점을 모두 점검하고 꼭 필요하지 않은 접속은 막으라고 지시했습니다. 공유된 공격 정보에 대응하지 않은 회사는 엄정 조치하겠다고 밝혔습니다.",
+   imp:"외부 노출 IT자산·인증·접근통제·침입탐지 전면 점검과, 유출 정보를 이용한 보이스피싱 등 2차 피해 대비가 요구됐습니다.",
+   src:[["아이뉴스24","https://inews24.com/view/2011718"]]},
+  {id:"S17",date:"2026-10-05",org:"국회",type:"국감 지적",sev:"mid",title:"대형 증권사 10곳 전산사고 113건, 1만 9천여명에 70억원 배상",
+   body:"2024년~2026년 8월 금감원 자료(박준태 의원)입니다. 키움증권 배상액이 약 38억원으로 가장 많았고, 원인은 프로그램 오류가 51.3%였습니다.",
+   imp:"전산사고가 투자자 보호와 시장 신뢰를 해친다며 예방과 IT 투자를 이끌 실효적 대책을 요구했습니다.",
+   src:[["비즈트리뷴","https://www.biztribune.co.kr/news/articleView.html?idxno=360074"]]},
+  {id:"S18",date:"2026-10-07",org:"금감원",type:"당국 지시",sev:"high",title:"금감원, 21개 증권사 감사 소집해 \"기본조차 안 지키는 위법 반복\" 질타",
+   body:"상품설명서 허위·부실 기재와 기록이 남지 않는 개인 휴대폰 투자 권유가 반복된다고 지적했습니다. 사전 예방 중심 감사로의 전환, 감사 인력·예산 확충, IT 보안 전면 재점검을 요구했습니다. 신용공여를 자기자본의 90% 이내로 관리하고 특정 종목 신용융자 비중이 15%를 넘으면 자율 축소하는 방안을 투자자에게 안내하라고 했습니다.",
+   imp:"상품 설계·제조 프로세스와 LP 주식대차 영업행위 검사 결과도 공유됐습니다. 광고업무 종합개선안 후속 조치의 자체 점검도 요구됐습니다.",
+   src:[["이투데이","https://www.etoday.co.kr/news/view/2633104"],["뉴스핌","https://www.newspim.com/news/view/20261007000458"]]},
+  {id:"S19",date:"2026-10-08",org:"국회",type:"국감 지적",sev:"mid",title:"금융위 국감, 단일종목 레버리지 ETF 종목 제한과 삼성증권 판매 제한 발언 공방",
+   body:"금융위원장은 시장 안정을 위해 대상 종목을 삼성전자·SK하이닉스로 제한했다고 설명했습니다. 삼성증권이 고액자산가 판매를 막고 PB 권유를 평가에서 감점했다는 지적에 위원장이 \"매우 위법\"하다고 했다가, 사실관계를 확인하겠다고 했습니다. 일부 의원은 단순 주문은 허용했다며 발언 철회를 요구했습니다.",
+   imp:"고위험 상품의 판매 제한·권유 금지 같은 자체 투자자 보호 조치도 근거와 고객 안내를 분명히 해둘 필요가 있습니다.",
+   src:[["이투데이","https://www.etoday.co.kr/news/view/2634114"]]}
+ ]},
+ issues:{title:"02 언론 등 내부통제 이슈",desc:"언론 보도와 국정감사 질의에서 드러난 증권업 내부통제 관련 이슈입니다.",items:[
+  {id:"I1",date:"2026-10-15",org:"파이낸셜뉴스",type:"리스크관리",sev:"high",title:"반대매매 5거래일 3,407억원, 투자자예탁금 9개월 만에 최저",
+   body:"10월 13~19일 하루 반대매매가 5거래일 연속 500억원을 넘었고 합계 3,407억원으로 직전 5거래일의 약 4.4배였습니다. 10월 19일 기준 위탁매매 미수금은 1조 4,293억원으로 1주 전보다 34.4% 늘었고, 신용융자 잔고는 31조 1,082억원, 투자자예탁금은 92조 966억원이었습니다.",
+   imp:"담보부족 고지, 반대매매 절차, 신용한도 관리가 민원·분쟁으로 이어질 수 있습니다.",
+   src:[["파이낸셜뉴스(10.21)","https://fnnews.com/news/202610202058004939"],["파이낸셜뉴스(10.15)","https://www.fnnews.com/news/202610151630487039"]]},
+  {id:"I2",date:"2026-10-14",org:"MTN",type:"정보보안",sev:"high",title:"증권가 해킹 경계령, 공격 IP 차단과 접속기록 점검",
+   body:"하나증권은 TF를 꾸려 공격 의심 IP를 차단하고 접속기록을 점검했고, NH투자·미래에셋도 위협 지표를 분석하고 있습니다. 전문가들은 최근 사고가 핵심 매매시스템보다 외부 업무시스템·위탁업체 접점에서 많이 생긴다고 지적했습니다.",
+   imp:"일본에서는 탈취한 로그인 정보로 보유주식을 팔고 소형주를 사는 부정거래가 다수 발생했습니다.",
+   src:[["MTN","https://news.mtn.co.kr/article/2026101415172164477"]]},
+  {id:"I3",date:"2026-10-15",org:"파이낸셜뉴스",type:"책무구조도",sev:"low",title:"하나증권, 책무구조도를 운영리스크 관리(RCSA)와 연결",
+   body:"딜로이트 안진과 함께 전체 임원의 담당 업무별 위험요인과 사고 시나리오, 관리 공백을 점검했습니다. 임원별 책임을 리스크·통제 자기평가와 리스크 프로파일에 연결해 식별부터 개선까지 한 체계로 묶었습니다.",
+   imp:"책무구조도를 문서가 아닌 위험관리 도구로 운영하는 사례로 참고할 만합니다.",
+   src:[["파이낸셜뉴스","https://www.fnnews.com/news/202610151452202649"],["뉴스1","https://www.news1.kr/finance/general-stock/6320832"]]},
+  {id:"I4",date:"2026-10-19",org:"한국금융신문",type:"지배구조",sev:"mid",title:"국감, 책무구조도 도입 후에도 사고 반복… 경영진 책임·이사회 견제 도마",
+   body:"은행권 중심 논의지만, 8대 금융지주 사외이사 79명 중 68명이 최고 등급을 받았고 이사회 표결 약 6,100건 중 반대는 1건이었습니다. CIO와 CISO를 분리했는데도 유출이 생겨 조직 분리만으로 부족하다는 지적도 나왔습니다.",
+   imp:"위험을 언제 파악해 누구에게 보고했고 어떤 후속 점검을 했는지 증빙하는 것이 핵심입니다.",
+   src:[["한국금융신문","https://fntimes.com/html/view.php?ud=2026101921425892465e6e69892f_18"]]},
+  {id:"I5",date:"2026-10-19",org:"뉴데일리",type:"상품·운용",sev:"mid",title:"운용역 1명이 펀드 58개 담당, 레버리지 ETF 감독 사각 논란",
+   body:"레버리지 ETF를 운용하는 일부 자산운용사 운용역이 수십 개 펀드를 맡고 있다는 자료가 공개됐습니다(박성훈 의원). 공동운용·자동화 가능성이 있어 과부하를 단정할 수는 없다는 단서가 붙었습니다.",
+   imp:"계열 운용사 상품을 판매하는 증권사도 판매 전 위험관리 체계 확인 근거를 갖춰둘 필요가 있습니다.",
+   src:[["뉴데일리","https://biz.newdaily.co.kr/site/data/html/2026/10/19/2026101900150.html"]]},
+  {id:"I6",date:"2026-10-20",org:"CBC뉴스",type:"감독 방향",sev:"high",title:"금감원장, 매도대금담보대출 자동서비스 점검 시사·T+1 결제 준비 언급",
+   body:"국감에서 투자자가 미수 발생 시 대출과 이자 부담을 제대로 인지하는지 문제가 제기됐고, 금감원장은 문제가 확인되면 점검하겠다고 답했습니다. T+1 결제주기는 증권사 전산 정비 상황을 보며 준비하겠다고 했습니다.",
+   imp:"자동 대출 서비스의 고지·동의 절차와 결제주기 단축 대응 전산 준비가 다음 점검 대상입니다.",
+   src:[["CBC뉴스","https://www.cbci.co.kr/news/articleView.html?idxno=617307"]]},
+  {id:"I7",date:"2026-10-20",org:"뉴데일리",type:"정보보안",sev:"high",title:"금융사 40곳 모의해킹, 실제 뚫린 업무시스템은 점검 대상에서 빠져",
+   body:"금감원·금융보안원이 2025~2026년 40개사를 모의해킹했지만, 실제 침해된 대출모집인 조회, 직원 모바일 업무, 영업지원, 위탁업체 관리 시스템은 대상이 아니었습니다(김형연 의원). 과거 사고 기준으로 대상을 고르다 새 공격 경로를 놓쳤다는 지적입니다.",
+   imp:"외부에서 접속 가능한 임직원·위탁업체 업무시스템을 취약점 점검 범위에 넣어야 한다는 요구입니다.",
+   src:[["뉴데일리","https://biz.newdaily.co.kr/site/data/html/2026/10/20/2026102000256.html"]]},
+  {id:"I8",date:"2026-10-06",org:"글로벌이코노믹",type:"정보보안",sev:"low",title:"증권가, 금융권 해킹 확산 우려에 연휴에도 보안 점검",
+   body:"금감원이 500개 금융회사에 공격 IP와 12개 보안 가이드라인을 전달했고, 증권사들은 차단 조치를 마치고 추가 공격을 모니터링하고 있습니다. 보도 시점까지 증권업계의 해킹 고객정보 유출은 확인되지 않았습니다.",
+   imp:"은행을 노리던 공격이 2금융권으로 번지고 있어 증권사도 표적이 될 수 있다는 우려가 나옵니다.",
+   src:[["글로벌이코노믹","https://www.g-enews.com/article/Securities/2026/10/202610061003514835923c501012_1"]]}
+ ]},
+ laws:{title:"03 법규 개정 사항",desc:"법·시행령·감독규정·협회 자율규제의 개정 예고와 국회 입법 동향입니다.",items:[
+  {id:"L1",date:"2026-10-13",until:"2026-11-02",org:"금투협",type:"규정 개정 예고 · 의견수렴 중",sev:"mid",title:"「금융투자전문인력과 자격시험에 관한 규정」 개정 예고 (의견 ~11.2)",
+   body:"금융투자협회가 10월 13일부터 11월 2일까지 개정을 예고했습니다. 구체 조문은 협회 법규정보시스템의 예고문에서 확인이 필요합니다.",
+   imp:"판매·권유 전문인력 등록·자격 요건이 바뀌면 영업점 인력 배치와 교육 계획에 영향을 줍니다.",
+   src:[["금투협 법규정보시스템","https://law.kofia.or.kr/service/revisionNotice/revisionNoticeList.do"]]},
+  {id:"L2",date:"2026-10-02",until:"2026-11-11",org:"금융위",type:"입법예고 · 의견수렴 중",sev:"mid",title:"토큰증권 하위법규 일괄 입법예고 (의견 ~11.11, 시행 2027.2.4)",
+   body:"자본시장법·전자증권법 시행령, 금융투자업규정, 증권의 발행 및 공시 등에 관한 규정, 전자등록업규정이 대상입니다. 주식·채권·펀드까지 토큰화를 허용하고, 발행인 계좌관리기관에 자기자본 40억원과 내부통제 전문인력 1명 등을 요구합니다. 장외거래소를 신설하고 개인 연간 순매수 한도를 1억원으로 둡니다.",
+   imp:"토큰증권 사업을 검토 중이라면 내부통제 인력 요건과 투자한도 관리 체계를 미리 설계해야 합니다.",
+   src:[["아주경제","https://www.ajunews.com/view/20261001091808401"],["금융위 입법예고","https://www.fsc.go.kr/po040301?srchBeginDt=&srchEndDt=&srchNoticeKindTy=&srchKey=sj&srchText=%EC%9E%90%EB%B3%B8%EC%8B%9C%EC%9E%A5"]]},
+  {id:"L3",date:"2026-09-28",until:"2026-11-09",org:"금융위",type:"규정변경예고 · 의견수렴 중",sev:"low",title:"「금융소비자 보호에 관한 감독규정」 개정안 (의견 ~11.9)",
+   body:"온라인 예금성 상품 판매중개업 등록제를 도입하고, 보험상품에만 적용하던 부당광고 금지를 모든 상품으로 넓힙니다. 고시 후 3개월이 지나면 시행됩니다.",
+   imp:"부당광고 금지 범위 확대는 증권사 투자상품 광고 심의 기준에도 영향을 줍니다.",
+   src:[["파이낸셜뉴스","https://www.fnnews.com/news/202609281045370714"]]},
+  {id:"L4",date:"2026-10-19",org:"국회",type:"법안 계류",sev:"low",title:"자본시장 선진화 법안 처리 지연, 의무공개매수 본회의 보류",
+   body:"의무공개매수 도입안은 법사위 심사를 마쳤지만 본회의 상정이 보류됐습니다. 기관투자자 5% 대량보유 보고 완화안은 10월 7일 발의돼 아직 상임위 단계입니다.",
+   imp:"통과 시 인수·합병 자문, 기관 고객 지분 보고 업무의 절차 정비가 필요합니다.",
+   src:[["머니투데이","https://www.mt.co.kr/society/2026/10/19/2026101609291950545"]]},
+  {id:"L5",date:"2026-10-19",org:"금감원",type:"제도 개편 검토",sev:"high",title:"침해사고 CEO·CISO 책임 강화, 보고시간 단축, IT자산 관리 의무화 검토",
+   body:"금감원장은 국감에서 최근 침해사고와 관련해 CEO·CISO 책임 강화와 보고시간 단축을 검토하겠다고 밝혔습니다. IT자산 식별·관리 의무화와 AI 기반 모의해킹 훈련 확대도 추진합니다. 망분리 규제 전면 완화는 아직 이르다고 봤습니다.",
+   imp:"규정 개정 전이라도 책무구조도의 정보보호 책무와 사고 보고 절차를 먼저 손볼 필요가 있습니다.",
+   src:[["CBC뉴스","https://www.cbci.co.kr/news/articleView.html?idxno=617307"]]},
+  {id:"L6",date:"2026-10-20",until:"2026-11-09",org:"금투협",type:"규정·모범규준 개정 예고",sev:"mid",title:"「증권 인수업무 등에 관한 규정」·「무보증사채 수요예측 모범규준」 개정 예고 (의견 ~11.9)",
+   body:"금융투자협회가 10월 20일부터 11월 9일까지 두 규정의 개정을 예고했습니다. 세부 조문은 예고문 확인이 필요합니다. 같은 시기 11월 13일 시행 예정인 코너스톤투자자·사전수요예측 제도(금융위 7.30 하위법규 예고)는 사전수요예측 정보에 비밀유지계약과 제공기록 보관을 요구합니다.",
+   imp:"IPO·회사채 인수부서의 수요예측 절차, 정보교류차단, 기록 보관 기준을 개정안에 맞춰 점검해야 합니다.",
+   src:[["금투협 법규정보시스템","https://law.kofia.or.kr/service/revisionNotice/revisionNoticeList.do"],["금융위(코너스톤 제도)","https://www.fsc.go.kr/no010101/87440?curPage=4"]]},
+  {id:"L7",date:"2026-09-16",until:"2026-10-06",org:"금융위",type:"입법예고",sev:"low",title:"합병가액 시가→공정가액 전환, 자본시장법 시행령·증권발행공시규정 개정 예고",
+   body:"합병가액을 시가·자산가치·수익가치를 종합한 공정가액으로 산정합니다. 이사회 의견서 공시, 외부기관 평가 의무화와 적정성 평가 결과 공시, 특수관계인 이해관계 추가 공시, 주식매수청구 가격 산정방식 다양화가 담겼습니다. 상위 법률은 2026년 12월 9일 시행 예정입니다.",
+   imp:"합병 자문·외부평가를 맡는 증권사는 평가 독립성과 이해상충 관리 절차를 점검해야 합니다.",
+   src:[["KDI 경제정보센터","https://eiec.kdi.re.kr/policy/materialView.do?num=286874"],["금융위 입법예고","https://www.fsc.go.kr/po040301?srchBeginDt=&srchEndDt=&srchNoticeKindTy=&srchKey=sj&srchText=%EC%9E%90%EB%B3%B8%EC%8B%9C%EC%9E%A5"]]},
+  {id:"L8",date:"2026-09-01",until:"2026-09-21",org:"금투협",type:"규정 개정 예고",sev:"mid",title:"금투협 표준내부통제기준·금융소비자보호 표준내부통제기준 등 4개 규정 개정 예고",
+   body:"금융투자협회가 「금융투자회사 표준내부통제기준」, 「금융투자회사의 금융소비자보호 표준내부통제기준」, 「금융투자회사의 영업 및 업무에 관한 규정」, 「자율규제위원회 운영 및 제재에 관한 규정」 개정을 9월 1일~21일 예고했습니다. 세부 조문은 예고문에서 확인이 필요합니다.",
+   imp:"표준내부통제기준이 바뀌면 당사 내부통제기준과 소비자보호 내부통제기준의 반영 여부를 점검해야 합니다.",
+   src:[["금투협 법규정보시스템","https://law.kofia.or.kr/service/revisionNotice/revisionNoticeList.do"]]}
+ ]},
+ actions:{title:"04 내부통제 해결 방안",desc:"01~03 항목에 대응하는 권고안입니다. 연결 항목 번호를 누르면 해당 원문 항목으로 이동합니다.",items:[
+  {id:"A1",sev:"high",owner:"준법감시",title:"임직원 자기매매 상시 모니터링으로 전환",links:["S2"],
+   acts:["신고 계좌와 타사 계좌 보유 여부를 정기 대사하고, 매매 빈도·금액 이상 패턴을 자동 탐지","매매내역 점검 주기를 분기에서 월 단위로 단축","퇴직 신청 시 자기매매 점검 완료를 퇴직 절차의 필수 단계로 지정","위반 시 이연 성과보수 감액과 연계하는 방안 검토"],
+   kpi:"미신고 계좌 적발 건수, 점검 주기, 퇴직 전 점검 완료율"},
+  {id:"A2",sev:"high",owner:"금융소비자보호 · 영업지원",title:"판매 적합성·설명의무와 수수료 고지를 시스템으로 강제",links:["S1","S6","S9","S13","S14","S18"],
+   acts:["투자성향보다 위험등급이 높은 상품 주문은 전산 차단하거나 부적합 확인서와 녹취를 필수화","채권 리테일 판매 설명 체크리스트를 전산화해 누락 시 주문 진행 불가","전문투자자 등록이 급증한 지점을 표본 점검","PB별 고객 회전율·수수료 집중도로 과당매매·임의매매 징후 모니터링","상품설명서 기재 내용은 준법감시가 사전 검토하고, 개인 휴대폰 투자 권유를 금지하며 업무용 녹취 단말 사용을 점검","가산 수수료는 매매명세서에 구분 표시하고, 판촉 이벤트는 출시 전 보상한도·이해상충 검토를 거치도록 절차화"],
+   kpi:"부적합 판매 건수, 설명·녹취 누락률, 회전율 상위 계좌 수"},
+  {id:"A3",sev:"high",owner:"리스크관리 · 리테일",title:"급락장 신용공여·반대매매 관리 강화",links:["S8","S13","S14","S18","I1","I6"],
+   acts:["종목·고객 집중 신용한도를 재점검하고 변동성에 연동해 담보비율 조정","담보부족·반대매매 예정 알림을 다채널로 발송하고 도달 여부 기록","매도대금담보대출 자동서비스의 대출·이자 발생 고지와 동의 절차 재확인","미수금·반대매매 금액을 일일 집계해 경영진에 보고","신용공여 총량을 자기자본의 90% 이내로 관리하고, 특정 종목 신용융자 비중이 15%를 넘으면 축소하는 기준을 운영·고객 안내"],
+   kpi:"신용융자 잔고 증감, 일 반대매매 금액, 알림 도달률"},
+  {id:"A4",sev:"high",owner:"정보보호(CISO)",title:"외부 접점 보안과 침해사고 보고 체계 정비",links:["S7","S10","S15","S16","I2","I7","I8","L5"],
+   acts:["위탁업체·원격접속을 포함한 외부 노출 IT자산을 전수 목록화하고, 모의해킹·취약점 점검 범위에 임직원·위탁업체 업무시스템 포함","관리자·원격 접속과 고객 출금·매매 단계에 다중인증 적용 점검","보고시간 단축에 대비해 탐지→보고 절차를 모의훈련으로 측정","책무구조도의 CISO·CEO 정보보호 책무와 관리조치를 구체화"],
+   kpi:"미식별 IT자산 수, MFA 적용률, 탐지부터 보고까지 걸린 시간"},
+  {id:"A5",sev:"mid",owner:"IT · 금융소비자보호",title:"전산장애 예방과 투자자 보상 절차 정비",links:["S3","S11","S17"],
+   acts:["프로그램 변경 시 테스트·승인 이력을 남기고 배포 전 영향도 점검","장애별 근본원인 분석과 재발방지 과제 이행을 추적","배포 후 정산·수수료 등 결과값 대사로 프로그램 오류를 조기 탐지","장애 보상 기준을 사전 공지하고 처리 기한을 관리"],
+   kpi:"장애 건수, 평균 복구시간, 발생~인지 소요일, 보상 처리기간"},
+  {id:"A6",sev:"mid",owner:"준법감시 · 경영기획",title:"책무구조도 실효성 입증 체계 구축",links:["S10","I3","I4"],
+   acts:["임원 책무별 위험요인·통제를 RCSA 항목과 매핑","관리조치 이행 증빙을 정기 수집하고 미이행 사유를 기록","이사회·위원회 보고 시 실질 쟁점과 이견을 의사록에 남김","대표이사 내부통제 총괄 관리의무 이행 증빙(점검 지시·보고 수령·후속 조치)을 분기별로 정리"],
+   kpi:"관리조치 이행률, RCSA 미매핑 책무 수"},
+  {id:"A7",sev:"mid",owner:"상품위원회 · 리스크관리",title:"고위험 신상품 도입과 감독자료 제출 통제",links:["S4","S5","S19","I5"],
+   acts:["고위험 신상품은 출시 전 상품위원회에서 위험·판매채널·투자자 보호 장치를 검토하고 기록","자기매매 포지션 한도와 손실 한도를 상품별로 설정","감독기관 제출 자료를 데이터 담당 부서와 준법감시가 이중 검증"],
+   kpi:"출시 전 검토 완료율, 제출 자료 오류 건수"},
+  {id:"A8",sev:"mid",owner:"준법감시(법무)",title:"법규 개정 일정 관리와 내부규정 갭 분석",links:["L1","L2","L3","L4","L6","L7","L8"],
+   acts:["의견수렴 마감일(11.2 · 11.9 · 11.11)과 코너스톤투자자 제도 시행일(11.13)을 관리하고 업무 영향 의견을 제출","개정안 기준으로 내부통제기준·업무매뉴얼 갭 분석 후 개정 일정 수립","토큰증권 사업 추진 시 내부통제 전문인력 등 요건 충족 여부 확인","인수부서 사전수요예측 정보 제공 시 비밀유지계약·제공기록 보관 절차 마련"],
+   kpi:"마감 내 검토 완료율, 미반영 조항 수"},
+  {id:"A9",sev:"high",owner:"리스크관리 · 준법감시(채권·신탁)",title:"랩·신탁 채권 거래의 이해상충과 손실보전 회피 차단",links:["S12"],
+   acts:["계좌 간 채권 거래 가격을 시가·KOFR과 비교해 비정상 금리 스왑을 자동 탐지","손실보전 금지 회피용 연계·파킹 거래 패턴을 정기 점검","장외 단기채 거래에서 금지된 보증 제공 여부를 점검","상근임원 겸직은 사전 승인과 정기 확인 절차로 관리"],
+   kpi:"가격 이탈 거래 건수, 연계거래 의심 건수, 겸직 승인 누락 건수"},
+  {id:"A10",sev:"high",owner:"감사 · 준법감시",title:"사전 예방 중심의 감사·준법 2선 점검으로 전환",links:["S13","S14","S18"],
+   acts:["투자자 보호 KPI를 영업 성과평가에 반영","소비자보호책임자(CCO)의 신상품 출시·성과평가 재검토 요청 절차 마련","준법감시가 상품 기획 단계부터 레드팀으로 참여하고 감사가 실제 작동 여부를 점검","광고업무 종합개선안 후속 조치 이행 여부 자체 점검"],
+   kpi:"투자자 보호 KPI 반영률, CCO 재검토 요청 건수, 사전 점검 대비 사후 적발 비율"}
+ ]}
+};
+/* ASSESS: 01~03 항목별 위험도와 당사 점검 항목입니다.
+   s=심각도 1~5, l=발생가능성 1~5 (일반적인 종합 증권사 기준 기본값), sr/lr=근거,
+   reg=근거 법규, q=당사 점검 질문, ap=승인·보고 대상, ev=남길 증빙 */
+const ASSESS={
+ S1:{s:3,l:4,sr:"불완전판매 과태료 수억원과 고객 배상, 영업점 직원 제재가 예상되는 수준입니다.",lr:"채권 리테일 판매는 대부분 증권사가 하고, 같은 유형이 반복해서 검사 지적을 받고 있습니다.",
+  reg:["금융소비자보호법 제17조(적합성 원칙)","금융소비자보호법 제19조(설명의무)"],
+  q:["투자성향보다 위험등급이 높은 채권 주문을 전산으로 막거나 부적합 확인서를 받고 있습니까?","채권 위험등급의 의미와 위험요인 설명이 녹취·확인서로 남습니까?","최근 1년 성향 불일치 채권 판매 건을 뽑아 표본 점검했습니까?"],
+  ap:"금융소비자보호 총괄책임자(CCO)",ev:"성향 불일치 판매 추출 결과, 설명 녹취·확인서 표본"},
+ S2:{s:3,l:4,sr:"위반자 개인 과태료와 회사 감독 책임, 언론 노출이 예상됩니다.",lr:"국감에서 10대 증권사 97명이 확인됐고, 상시 모니터링 요구가 커지고 있습니다.",
+  reg:["자본시장법 제63조(임직원의 금융투자상품 매매)","자본시장법 시행령 제64조"],
+  q:["임직원 매매계좌를 신고받고 분기별 매매내역을 통지받고 있습니까?","미신고 타사 계좌 보유 여부를 확인하는 방법이 있습니까?","퇴직 예정자의 자기매매 점검을 퇴직 전에 끝냅니까?"],
+  ap:"준법감시인",ev:"계좌 신고 대장, 매매내역 점검 결과, 퇴직자 점검 기록"},
+ S3:{s:3,l:4,sr:"반복 장애는 과태료와 투자자 배상, 경영유의 조치로 이어집니다.",lr:"증권업 장애 건수가 은행 다음으로 많고, 국감 후속 점검이 예상됩니다.",
+  reg:["전자금융거래법 제21조(안전성의 확보의무)","전자금융감독규정(전산자원·비상대책)"],
+  q:["장애마다 근본원인 분석과 재발방지 과제를 기록하고 이행을 추적합니까?","장애 보상 기준을 고객에게 미리 알리고 처리 기한을 관리합니까?"],
+  ap:"CIO, 정보보호최고책임자(CISO)",ev:"장애 보고서, 재발방지 과제 이행표, 보상 처리 대장"},
+ S4:{s:2,l:2,sr:"감독기관 절차 논란이며, 판매사를 직접 제재하는 사안은 아닙니다.",lr:"당사가 해당 상품을 팔더라도 심사 절차는 당사가 통제할 수 없습니다.",
+  reg:["레버리지 ETP 사전교육·기본예탁금 기준(거래소·금투협)"],
+  q:["고위험 신상품을 판매하기 전 상품위원회 검토 기록이 남습니까?","레버리지 ETP 사전교육 이수와 기본예탁금 확인을 주문 단계에서 강제합니까?"],
+  ap:"상품위원회",ev:"상품위원회 의사록, 사전교육 확인 로그"},
+ S5:{s:3,l:3,sr:"제출 자료 오류는 검사 지적과 감독기관 신뢰 하락으로 이어질 수 있습니다.",lr:"국감·검사 시기에 자료 요구가 몰려 검증이 느슨해지기 쉽습니다.",
+  reg:["금융기관 검사 및 제재에 관한 규정(자료 제출)"],
+  q:["감독기관 제출 자료를 작성 부서 외 다른 부서가 검증합니까?","단일종목 레버리지 상품 자기매매에 상품별 포지션·손실 한도가 있습니까?"],
+  ap:"준법감시인, 리스크관리책임자(CRO)",ev:"제출 자료 검증 기록, 포지션 한도표"},
+ S6:{s:4,l:4,sr:"임의·과당매매는 기관 제재, 임원 문책, 고객 배상과 언론 보도로 번집니다.",lr:"금감원이 대형사로 검사를 넓히고 있고, 앞선 지점 검사에서 위법이 이미 지적됐습니다.",
+  reg:["자본시장법 제70조(임의매매의 금지)","자본시장법 제71조·시행령 제68조(불건전 영업행위)","신용정보법(개인신용정보 이용 제한)"],
+  q:["고액 PB별 고객 회전율·수수료 집중도를 정기 모니터링합니까?","전문투자자 신규 등록이 급증한 지점을 점검했습니까?","고객 신용정보 조회 로그를 업무 목적과 대사합니까?","개인 휴대전화 영업을 금지하고 점검합니까?"],
+  ap:"감사위원회, 준법감시인",ev:"PB 모니터링 보고서, 전문투자자 등록 점검 결과, 조회 로그 점검표"},
+ S7:{s:5,l:3,sr:"대규모 고객정보 유출이면 영업 제한, CEO·CISO 제재, 집단 배상까지 이어집니다.",lr:"16개 금융회사에서 실제 침해가 확인됐고, 공격이 2금융권으로 번지고 있습니다.",
+  reg:["전자금융거래법 제21조(안전성의 확보의무)","신용정보법 제19조(신용정보전산시스템의 안전보호)","개인정보 보호법 제29조(안전조치의무)"],
+  q:["당국이 공유한 공격 정보(IP·악성코드 지표)를 차단하고 완료 기록을 남겼습니까?","유출 사고 시 통지·신고 절차를 모의훈련했습니까?"],
+  ap:"CISO → 대표이사·이사회",ev:"공격 정보 차단 대장, 모의훈련 결과"},
+ S8:{s:3,l:4,sr:"급락장 반대매매 분쟁과 신용공여 한도 관리 지적이 예상됩니다.",lr:"당국이 직접 당부했고 신용융자 잔고가 높은 상태입니다.",
+  reg:["자본시장법 제72조(신용공여)","자본시장법 시행령 제69조"],
+  q:["종목·고객 집중 신용한도를 급락장 기준으로 다시 점검했습니까?","신용공여 총량과 종목별 비중을 매일 경영진에 보고합니까?"],
+  ap:"CRO, 대표이사",ev:"신용공여 일일 보고, 한도 조정 결재"},
+ S9:{s:3,l:3,sr:"경영유의·개선 조치와 수수료 반환, 이해상충 지적 수준입니다.",lr:"유료 투자정보 서비스와 거래금액 연동 이벤트는 여러 증권사가 운영합니다.",
+  reg:["자본시장법 제58조(수수료)","자본시장법 제44조(이해상충의 관리)"],
+  q:["유료 서비스 가산수수료가 서비스 대상 거래에만 붙습니까?","매매명세서에 기본·가산 수수료를 나눠 표시합니까?","거래금액 연동 이벤트에 동일인 보상한도와 이해상충 사전검토를 거칩니까?"],
+  ap:"준법감시인, CCO",ev:"수수료 체계표, 명세서 샘플, 이벤트 사전검토서"},
+ S10:{s:5,l:2,sr:"대표이사 개인에 대한 첫 관리의무 제재 선례가 될 수 있습니다.",lr:"당사에 같은 규모의 사고가 생겨야 현실화합니다.",
+  reg:["금융회사의 지배구조에 관한 법률 제30조의2~제30조의4(책무구조도·관리의무)"],
+  q:["대표이사의 내부통제 총괄 관리의무 이행 증빙(점검 지시·보고 수령·후속 조치)을 정리하고 있습니까?","책무기술서에 정보보호 책무와 관리조치가 구체적으로 적혀 있습니까?"],
+  ap:"이사회, 대표이사",ev:"관리의무 이행 점검표, 책무기술서"},
+ S11:{s:3,l:3,sr:"늦은 발견은 보고의무 위반과 피해 확대로 이어집니다.",lr:"지연 발견의 대부분이 프로그램 오류여서 어느 회사에서나 생길 수 있습니다.",
+  reg:["전자금융감독규정(전자금융사고 보고)"],
+  q:["배포 후 정산·수수료 등 결과값을 대사해 오류를 찾습니까?","사고 발생일·인지일·보고일을 따로 기록합니까?"],
+  ap:"CIO",ev:"결과값 대사 기록, 사고 대장"},
+ S12:{s:5,l:2,sr:"기관경고, 10억원대 과태료, 임원 문책이 실제로 나왔습니다.",lr:"업권 전반이 이미 검사를 받았고 랩·신탁 채권 운용 규모가 줄었습니다.",
+  reg:["자본시장법 제55조(손실보전 등의 금지)","자본시장법 제85조·제108조(투자일임·신탁 불건전 영업행위)","금융회사의 지배구조에 관한 법률 제10조(겸직 제한)"],
+  q:["계좌 간 채권 거래 금리를 시가·KOFR과 비교해 이탈 거래를 찾습니까?","연계·파킹 거래 패턴을 정기 점검합니까?","상근임원 영리 겸직을 사전 승인받고 정기 확인합니까?"],
+  ap:"준법감시인, CRO",ev:"가격 이탈 점검 결과, 겸직 승인 대장"},
+ S13:{s:3,l:5,sr:"이행하지 않으면 검사에서 지적되고 CCO·준법감시 체계가 문제 됩니다.",lr:"당국이 준법감시인을 소집해 직접 요구한 사항입니다.",
+  reg:["금융소비자보호법 제16조(관리책임)","금융투자회사의 금융소비자보호 표준내부통제기준"],
+  q:["투자자 보호 KPI를 영업 성과평가에 넣었습니까?","CCO가 신상품·성과평가 재검토를 요청할 근거 규정이 있습니까?","해외투자 이벤트·광고를 준법감시가 사전 심의합니까?"],
+  ap:"CCO, 준법감시인",ev:"KPI 개정안, 재검토 요청 절차, 광고 심의 기록"},
+ S14:{s:3,l:4,sr:"경영진 책임과 신용한도 운영이 검사 대상이 됩니다.",lr:"금감원장이 CEO들에게 집중 검사를 예고했습니다.",
+  reg:["자본시장법 제72조(신용공여)","금융소비자보호법 제22조(광고)"],
+  q:["종목별·자기자본 대비 신용한도를 운영 기준으로 정했습니까?","고객에게 숨은 비용이 전가되는 수수료 구조가 없는지 점검했습니까?"],
+  ap:"대표이사, CRO",ev:"신용한도 기준, 수수료 점검 결과"},
+ S15:{s:4,l:3,sr:"점검 증빙이 없으면 사고 시 관리의무 미이행으로 판단될 수 있습니다.",lr:"지시는 이미 내려왔고, 이행 여부는 이후 검사에서 확인됩니다.",
+  reg:["전자금융거래법 제21조(안전성의 확보의무)","신용정보법 제19조(신용정보전산시스템의 안전보호)"],
+  q:["10월 1일 공유된 점검 항목대로 자체 점검을 마치고 결과를 보고했습니까?","점검 결과와 조치 내역을 증빙으로 보관합니까?"],
+  ap:"CISO → 대표이사",ev:"자체 점검 결과 보고서"},
+ S16:{s:5,l:3,sr:"외부 접속점을 통한 유출은 대규모 피해와 경영진 제재로 이어집니다.",lr:"실제 침해가 위탁업체·임직원 접속점에서 일어났습니다.",
+  reg:["전자금융거래법 제21조(안전성의 확보의무)","개인정보 보호법 제29조(안전조치의무)"],
+  q:["임직원·위탁업체의 외부 접속점을 모두 목록화했습니까?","꼭 필요하지 않은 접속을 막고 최소 권한을 적용했습니까?","유출 정보를 이용한 2차 피해(보이스피싱 등) 대응 안내를 준비했습니까?"],
+  ap:"CISO → 대표이사·이사회",ev:"외부 접속점 목록, 권한 정비 결과"},
+ S17:{s:3,l:3,sr:"배상과 과태료, 고객 이탈이 따릅니다.",lr:"원인의 절반이 프로그램 오류로, 흔한 유형입니다.",
+  reg:["전자금융거래법 제21조(안전성의 확보의무)"],
+  q:["프로그램 변경 시 테스트·승인 이력을 남깁니까?","전산사고 배상 기준과 처리 기간을 관리합니까?"],
+  ap:"CIO, CCO",ev:"변경관리 기록, 배상 처리 대장"},
+ S18:{s:4,l:4,sr:"상품설명서 허위 기재와 기록 없는 권유는 기관 제재와 배상으로 이어집니다.",lr:"금감원이 반복 위법으로 지목하고 감사에게 직접 개선을 요구했습니다.",
+  reg:["금융소비자보호법 제19조(설명의무)","금융소비자보호법 제21조(부당권유행위 금지)","자본시장법 제72조(신용공여)"],
+  q:["상품설명서 기재 내용을 준법감시가 사전 검토합니까?","개인 휴대전화 투자 권유를 금지하고 업무용 녹취 단말 사용을 점검합니까?","신용공여를 자기자본 90% 이내로 관리하고, 특정 종목 비중이 15%를 넘으면 축소하는 기준을 운영합니까?","감사 인력·예산을 늘릴 계획이 있습니까?"],
+  ap:"감사위원회, 준법감시인",ev:"설명서 검토 기록, 녹취 단말 점검 결과, 신용공여 비중 보고"},
+ S19:{s:2,l:2,sr:"발언 공방 수준이며 제재로 이어지지 않았습니다.",lr:"당사가 자체 판매 제한을 할 때만 관련됩니다.",
+  reg:["금융소비자보호법 제17조(적합성 원칙)"],
+  q:["고위험 상품의 판매 제한·권유 금지 조치를 할 때 근거와 고객 안내를 문서로 남깁니까?"],
+  ap:"CCO",ev:"판매 제한 결재, 고객 안내문"},
+ I1:{s:3,l:5,sr:"반대매매 고지 누락은 민원·분쟁과 배상으로 이어집니다.",lr:"반대매매가 이미 급증했습니다.",
+  reg:["자본시장법 제72조(신용공여)","금융투자업규정(담보 부족 통지·임의상환)"],
+  q:["담보부족·반대매매 예정 알림이 여러 채널로 발송되고 도달 기록이 남습니까?","미수금·반대매매 금액을 매일 집계해 보고합니까?"],
+  ap:"CRO, CCO",ev:"알림 발송·도달 로그, 일일 보고"},
+ I2:{s:4,l:3,sr:"탈취한 로그인 정보로 인한 부정거래는 고객 손실 배상과 제재로 이어집니다.",lr:"국내 증권사들도 공격 IP를 차단하는 등 경계 수준이 높습니다.",
+  reg:["전자금융거래법 제9조(금융회사등의 책임)","전자금융거래법 제21조(안전성의 확보의무)"],
+  q:["관리자·원격 접속과 고객 매매·출금 단계에 다중인증을 적용합니까?","보유주식 일괄 매도 뒤 소형주 매수 같은 이상 주문 패턴을 탐지합니까?"],
+  ap:"CISO",ev:"다중인증 적용 현황, 이상거래 탐지 규칙"},
+ I3:{s:2,l:2,sr:"모범 사례로, 당사에 직접적인 제재 리스크는 없습니다.",lr:"운영 수준을 비교하는 참고 자료입니다.",
+  reg:["금융회사의 지배구조에 관한 법률 제30조의2~제30조의4(책무구조도·관리의무)"],
+  q:["임원 책무별 위험요인·통제를 RCSA 항목과 연결했습니까?"],
+  ap:"준법감시인",ev:"책무–RCSA 매핑표"},
+ I4:{s:4,l:3,sr:"사고 시 경영진·이사회의 관리의무가 직접 쟁점이 됩니다.",lr:"국감 지적으로 책무구조도 실효성 점검이 넓어질 전망입니다.",
+  reg:["금융회사의 지배구조에 관한 법률 제30조의2~제30조의4(책무구조도·관리의무)"],
+  q:["위험 인지 시점·보고 대상·후속 조치를 기록합니까?","이사회·위원회 의사록에 실질 쟁점과 이견이 남습니까?"],
+  ap:"이사회",ev:"보고 이력, 의사록"},
+ I5:{s:2,l:2,sr:"운용사 문제여서 판매사 책임은 제한적입니다.",lr:"계열 운용사 상품을 많이 팔 때만 관련됩니다.",
+  reg:["금융소비자보호법 제16조(관리책임)"],
+  q:["판매 전 운용사의 위험관리 체계를 확인한 근거를 남깁니까?"],
+  ap:"상품위원회",ev:"판매 전 실사 자료"},
+ I6:{s:3,l:4,sr:"고지·동의 미흡은 민원과 개선 조치로 이어집니다.",lr:"금감원장이 문제를 확인하면 점검하겠다고 밝혔습니다.",
+  reg:["금융소비자보호법 제19조(설명의무)"],
+  q:["매도대금담보대출 자동서비스의 대출·이자 발생을 가입 시 고지하고 동의를 받습니까?","T+1 결제주기 전환에 필요한 전산 과제를 정리했습니까?"],
+  ap:"CCO, CIO",ev:"가입 고지·동의 화면, 전산 과제 목록"},
+ I7:{s:4,l:3,sr:"점검 범위 밖 시스템이 뚫리면 대규모 유출로 번집니다.",lr:"실제 침해가 점검 대상에서 빠진 업무시스템에서 났습니다.",
+  reg:["전자금융거래법 제21조(안전성의 확보의무)","전자금융감독규정(취약점 분석·평가)"],
+  q:["모의해킹·취약점 점검 범위에 임직원 모바일·위탁업체 관리 시스템이 들어 있습니까?","외부에서 접속할 수 있는 IT자산을 모두 식별했습니까?"],
+  ap:"CISO",ev:"점검 범위표, IT자산 목록"},
+ I8:{s:3,l:2,sr:"유출되면 피해가 크지만, 보도 시점까지 증권업 유출은 없었습니다.",lr:"차단 조치가 진행 중이어서 단기 가능성은 낮습니다.",
+  reg:["전자금융거래법 제21조(안전성의 확보의무)"],
+  q:["연휴·주말 보안관제 인력과 비상연락망을 운영합니까?"],
+  ap:"CISO",ev:"관제 근무표, 비상연락망"},
+ L1:{s:2,l:4,sr:"요건 변경을 놓치면 무자격 권유 문제가 생길 수 있습니다.",lr:"개정이 예고됐고 영업점 인력에 바로 적용됩니다.",
+  reg:["금융투자전문인력과 자격시험에 관한 규정(금투협)"],
+  q:["예고 조문을 확인해 전문인력 등록·교육에 미치는 영향을 검토했습니까?","의견 제출 여부를 11월 2일 전에 정했습니까?"],
+  ap:"준법감시인, 인사",ev:"영향 검토 메모"},
+ L2:{s:2,l:3,sr:"요건을 못 맞추면 사업 인가·등록이 늦어지는 수준입니다.",lr:"토큰증권 사업을 검토하는 경우에만 해당합니다.",
+  reg:["자본시장법·전자증권법 시행령 개정안","금융투자업규정 개정안"],
+  q:["토큰증권 사업 추진 여부와 내부통제 전문인력·자기자본 요건 충족 여부를 확인했습니까?"],
+  ap:"경영기획, 준법감시인",ev:"요건 점검표"},
+ L3:{s:3,l:3,sr:"부당광고 금지를 어기면 과태료와 광고 중단 대상입니다.",lr:"투자상품 광고 심의 기준이 바뀌어 대응이 필요합니다.",
+  reg:["금융소비자보호법 제22조(광고 관련 준수사항)","금융소비자 보호에 관한 감독규정"],
+  q:["개정안의 부당광고 유형을 광고 심의 체크리스트에 반영할 계획이 있습니까?"],
+  ap:"CCO",ev:"광고 심의 기준 개정안"},
+ L4:{s:2,l:2,sr:"통과되면 절차를 정비하는 부담 수준입니다.",lr:"본회의 상정이 보류돼 시기가 불확실합니다.",
+  reg:["자본시장법 개정안(의무공개매수·대량보유 보고)"],
+  q:["통과 시 영향받는 업무(M&A 자문, 기관 지분 보고)를 목록화했습니까?"],
+  ap:"IB 부서, 준법감시인",ev:"영향 업무 목록"},
+ L5:{s:4,l:3,sr:"확정되면 CEO·CISO 책임과 보고 의무가 무거워집니다.",lr:"금감원장이 국감에서 검토를 공식화했습니다.",
+  reg:["전자금융거래법·전자금융감독규정 개정 검토","금융회사의 지배구조에 관한 법률 제30조의2~제30조의4(책무구조도·관리의무)"],
+  q:["침해사고 탐지부터 보고까지 걸리는 시간을 측정했습니까?","IT자산 식별·관리 대장을 운영합니까?","책무기술서의 CEO·CISO 정보보호 책무를 개정 방향에 맞춰 보완할 계획이 있습니까?"],
+  ap:"CISO, 대표이사",ev:"보고 소요시간 측정 결과, IT자산 대장"},
+ L6:{s:3,l:4,sr:"수요예측 정보 관리 소홀은 정보교류 차단 위반이 될 수 있습니다.",lr:"코너스톤투자자 제도가 11월 13일 시행됩니다.",
+  reg:["증권 인수업무 등에 관한 규정(금투협)","자본시장법 제45조(정보교류의 차단)"],
+  q:["사전수요예측 정보를 제공할 때 비밀유지계약과 제공기록을 남기는 절차가 있습니까?","예고된 개정 조문을 인수 업무매뉴얼과 비교했습니까?"],
+  ap:"IB 부서장, 준법감시인",ev:"비밀유지계약 양식, 제공기록 대장"},
+ L7:{s:3,l:3,sr:"외부평가 독립성 문제는 제재와 평판 손상으로 이어집니다.",lr:"합병 자문·외부평가를 맡는다면 12월 시행에 맞춰 대응해야 합니다.",
+  reg:["자본시장법 시행령·증권의 발행 및 공시 등에 관한 규정 개정안","자본시장법 제44조(이해상충의 관리)"],
+  q:["외부평가 업무를 맡을 때 이해상충을 확인하는 절차가 있습니까?"],
+  ap:"IB 부서장, 준법감시인",ev:"이해상충 점검표"},
+ L8:{s:3,l:5,sr:"표준기준을 반영하지 않으면 자율규제 제재와 검사 지적 대상입니다.",lr:"개정이 확정되면 당사 기준에 반영해야 합니다.",
+  reg:["금융투자회사 표준내부통제기준","금융투자회사의 금융소비자보호 표준내부통제기준"],
+  q:["개정 조문과 당사 내부통제기준을 대조해 갭 분석을 했습니까?","반영 일정과 이사회 승인 일정을 잡았습니까?"],
+  ap:"준법감시인 → 이사회",ev:"갭 분석표, 개정 일정"}
+};
+/* ===== DATA END ===== */
+const ORDER=["sanctions","issues","laws","actions"];
+const SRC=["sanctions","issues","laws"];
+const LV={crit:{n:"심각",r:4},high:{n:"높음",r:3},mid:{n:"중간",r:2},low:{n:"낮음",r:1},none:{n:"미평가",r:0}};
+const LVORDER=["crit","high","mid","low","none"];
+const SN=["","미미","경미","보통","중대","치명"],LN=["","희박","낮음","가능","높음","거의 확실"];
+const SDEF=["","내부 시정으로 끝나고 외부 영향이 없습니다.","경영유의·개선 요구나 소액 과태료 수준이며 언론 노출이 없습니다.","기관주의, 수억원대 과태료, 직원 제재, 제한적인 보도가 따릅니다.","기관경고, 수십억원대 과태료, 임원 문책, 대규모 배상, 주요 언론 보도가 따릅니다.","영업정지·인가 영향, 대표이사 관리의무 제재, 형사 책임, 대규모 고객 피해가 생깁니다."];
+const LDEF=["","당사에 해당 업무가 없거나 선례가 없습니다.","해당 업무는 있으나 선례가 적고 특정 계기가 있어야 합니다.","업계 선례가 있고 당사도 같은 업무를 합니다.","당국이 업권 점검을 예고했거나 진행 중이고 선례가 분명합니다.","당국 지시로 대응이 이미 의무가 됐거나 사건이 진행 중입니다."];
+const STATUS={ok:"이상 없음",gap:"보완 필요",na:"해당 없음"};
+const state={sec:"sanctions",filter:"전체",sort:"date",cell:null,from:"",to:""};
+const chk={}; /* 점검 기록: 항목 id → {a:{질문번호:상태}, s, l, note, by, at} */
+const rt={db:null,user:null,uid:null,writable:false,note:"",err:{}};
+const openSet=new Set();
+const el=id=>document.getElementById(id);
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
+function iso(d){const z=n=>String(n).padStart(2,"0");return d.getFullYear()+"-"+z(d.getMonth()+1)+"-"+z(d.getDate())}
+function defaultRange(){const t=new Date();const f=new Date(t);f.setDate(t.getDate()-3);return [iso(f),iso(t)]}
+function short(d){return d.slice(5).replace("-",".")}
+function lvOf(sc){return sc>=16?"crit":sc>=10?"high":sc>=5?"mid":sc>=1?"low":"none"}
+function valid(n){return Number.isInteger(n)&&n>=1&&n<=5}
+function rk(it){
+  const a=ASSESS[it.id];if(!a||!valid(a.s)||!valid(a.l))return {lv:"none",score:0,s:0,l:0,adj:false};
+  const c=chk[it.id]||{};const s=valid(c.s)?c.s:a.s,l=valid(c.l)?c.l:a.l;
+  return {s,l,score:s*l,lv:lvOf(s*l),adj:s!==a.s||l!==a.l,base:a};
+}
+function lvPill(lv,prefix){return `<span class="pill p-${lv}">${prefix||""}${LV[lv].n}</span>`}
+function mix(list){const c={};list.forEach(i=>c[i.lv]=(c[i.lv]||0)+1);return LVORDER.filter(k=>c[k]).map(k=>`<span class="pill p-${k}">${LV[k].n} ${c[k]}</span>`).join("")}
+function inRange(it){if(it.date>=state.from&&it.date<=state.to)return true;return !!(it.until&&it.date<=state.to&&it.until>=state.from)}
+const byDate=(a,b)=>b.date.localeCompare(a.date)||b.id.localeCompare(a.id,undefined,{numeric:true});
+const byRisk=(a,b)=>(b.score-a.score)||(LV[b.lv].r-LV[a.lv].r)||byDate(a,b);
+function srcItems(sec){return DATA[sec].items.filter(inRange).map(i=>{const r=rk(i);return {...i,...r,sec}})}
+function visible(sec){
+  if(sec!=="actions")return srcItems(sec).sort(byDate);
+  const vis={};SRC.forEach(k=>srcItems(k).forEach(i=>vis[i.id]=i));
+  return DATA.actions.items.filter(a=>a.links.some(l=>vis[l])).map(a=>{
+    const v=a.links.filter(l=>vis[l]);const top=v.map(l=>vis[l]).sort(byRisk)[0];
+    return {...a,date:v.map(l=>vis[l].date).sort().pop(),vis:v,lv:top.lv,score:top.score};
+  }).sort(byDate);
+}
+function allSrc(){return SRC.flatMap(srcItems)}
+function findSec(id){return ORDER.find(k=>DATA[k].items.some(i=>i.id===id))}
+function progress(id){
+  const a=ASSESS[id];if(!a)return null;const c=(chk[id]&&chk[id].a)||{};
+  let ok=0,gap=0,na=0;a.q.forEach((_,k)=>{const v=c[k];if(v==="ok")ok++;else if(v==="gap")gap++;else if(v==="na")na++});
+  return {n:a.q.length,ok,gap,na,done:ok+gap+na};
+}
+function canWrite(){return rt.db&&rt.writable}
+function renderCheck(it){
+  const a=ASSESS[it.id];
+  if(!a)return `<details class="chk"><summary>위험도 근거 · 당사 점검 <span class="cstat">아직 평가하지 않은 항목입니다</span></summary><div class="chk-body"><p class="dbnote">다음 자동 갱신 때 위험도와 점검 항목이 채워집니다.</p></div></details>`;
+  const c=chk[it.id]||{};const p=progress(it.id);const dis=canWrite()?"":" disabled";
+  const sel=(k,cur,base,names)=>`<select id="adj-${k}-${it.id}" data-adj="${k}" data-id="${it.id}" aria-label="당사 기준 ${k==="s"?"심각도":"발생가능성"}"${dis}><option value="">기본 ${base}</option>${[1,2,3,4,5].map(n=>`<option value="${n}"${valid(cur)&&cur===n?" selected":""}>${n} ${names[n]}</option>`).join("")}</select>`;
+  const qs=a.q.map((q,k)=>{const v=(c.a||{})[k]||"";return `<li class="${v?"st-"+v:""}"><span>${esc(q)}</span><span class="seg" role="group" aria-label="${k+1}번 점검 결과">${Object.keys(STATUS).map(s=>`<button type="button" class="v-${s}" data-st="${s}" data-q="${k}" data-id="${it.id}" aria-pressed="${v===s}"${dis}>${STATUS[s]}</button>`).join("")}</span></li>`}).join("");
+  const stat=`<span class="cstat">점검 <b>${p.done}/${p.n}</b>${p.gap?` · <b class="g">보완 필요 ${p.gap}</b>`:""}</span>`;
+  const who=c.at?`<span data-who="${esc(c.by||"")}">마지막 기록 ${esc(c.at.slice(0,16).replace("T"," "))}</span>`:"";
+  return `<details class="chk" data-id="${it.id}"${openSet.has(it.id)?" open":""}><summary>위험도 근거 · 당사 점검 ${stat}</summary><div class="chk-body">
+    <div class="why">
+      <div><span class="h">심각도 <b>${it.s} ${SN[it.s]}</b><span>당사 기준</span>${sel("s",c.s,a.s,SN)}</span><p>${esc(a.sr)}</p></div>
+      <div><span class="h">발생가능성 <b>${it.l} ${LN[it.l]}</b><span>당사 기준</span>${sel("l",c.l,a.l,LN)}</span><p>${esc(a.lr)}</p></div>
+    </div>
+    <div class="note"><span class="lab2">근거 법규</span><div class="regs">${a.reg.map(r=>`<span>${esc(r)}</span>`).join("")}</div></div>
+    <div class="note"><span class="lab2">당사 점검 질문</span><ol class="qs">${qs}</ol></div>
+    <dl class="kv"><dt>승인·보고</dt><dd>${esc(a.ap)}</dd><dt>남길 증빙</dt><dd>${esc(a.ev)}</dd></dl>
+    <div class="note"><label class="lab2" for="note-${it.id}">점검 메모</label><textarea id="note-${it.id}" data-note="${it.id}" placeholder="확인한 내용, 담당자, 개선 예정일을 적습니다."${dis}>${esc(c.note||"")}</textarea></div>
+    <div class="foot">${who}<span>${esc(rt.note)}</span>${rt.err[it.id]?`<span class="err">${esc(rt.err[it.id])}</span>`:""}</div>
+  </div></details>`;
+}
+function renderItem(it){
+  const sec=it.sec||findSec(it.id);
+  if(sec==="actions"){
+    return `<article class="item sev-${it.lv}" id="it-${it.id}"><div class="meta"><span class="id">${it.id}</span><span class="date">최근 연결 ${short(it.date)}</span>${lvPill(it.lv,"우선순위 ")}<span class="tag">${esc(it.owner)}</span></div>
+    <h3>${esc(it.title)}</h3>
+    <div class="links">연결 항목 ${it.vis.map(l=>`<button class="ref" data-ref="${l}">${l}</button>`).join("")}</div>
+    <ol class="acts">${it.acts.map(a=>`<li>${esc(a)}</li>`).join("")}</ol>
+    <div class="kpi"><b>모니터링 지표</b> · ${esc(it.kpi)}</div></article>`;
+  }
+  const back=visible("actions").filter(a=>a.links.includes(it.id)).map(a=>`<button class="ref" data-ref="${a.id}">${a.id}</button>`).join("");
+  const until=it.until?`<span class="tag">의견 ~${short(it.until)}</span>`:"";
+  const score=it.lv==="none"?"":`<span class="score">${it.score} (S${it.s}×L${it.l})</span>${it.adj?`<span class="adj">당사 조정</span>`:""}`;
+  return `<article class="item sev-${it.lv}" id="it-${it.id}"><div class="meta"><span class="id">${it.id}</span><span class="date">${it.date.replace(/-/g,".")}</span><span class="tag">${esc(it.org)}</span><span class="tag">${esc(it.type)}</span>${until}${lvPill(it.lv)}${score}</div>
+  <h3>${esc(it.title)}</h3><p>${esc(it.body)}</p><p class="imp"><b>시사점</b> ${esc(it.imp)}</p>
+  <div class="src">${it.src.map(s=>`<a href="${s[1]}" target="_blank" rel="noopener">${esc(s[0])} ↗</a>`).join("")}${back?`<span class="links">해결 방안 ${back}</span>`:""}</div>
+  ${renderCheck(it)}</article>`;
+}
+function renderTiles(){
+  ORDER.forEach(k=>{const v=visible(k);const n=el("n-"+k);n.textContent=v.length;n.setAttribute("aria-label",DATA[k].title+" "+v.length+"건 보기");el("m-"+k).innerHTML=mix(v)});
+  el("period-label").textContent=state.from.replace(/-/g,".")+" – "+state.to.replace(/-/g,".");
+}
+function renderMatrix(){
+  const items=allSrc().filter(i=>i.lv!=="none");const cnt={};items.forEach(i=>{const k=i.s+"-"+i.l;cnt[k]=(cnt[k]||0)+1});
+  let h=`<div class="ytitle">심각도 ↓</div>`+"<div></div>".repeat(5);
+  for(let s=5;s>=1;s--){
+    h+=`<div class="ax">${SN[s]}</div><div class="axn">${s}</div>`;
+    for(let l=1;l<=5;l++){const k=s+"-"+l,n=cnt[k]||0,z=lvOf(s*l);
+      h+=`<button type="button" class="cell z-${z}${n?" has":""}${state.cell===k?" sel":""}" data-cell="${k}" ${n?"":"tabindex=\"-1\" aria-disabled=\"true\""} aria-label="심각도 ${s} ${SN[s]}, 발생가능성 ${l} ${LN[l]}, 점수 ${s*l}, ${n}건"><span class="sc">${s*l}</span><span class="ct">${n||"·"}</span></button>`}
+  }
+  h+=`<div></div><div></div>`;for(let l=1;l<=5;l++)h+=`<div class="axb">${l}<br>${LN[l]}</div>`;
+  h+=`<div></div><div></div><div class="xtitle">발생가능성 →</div>`;
+  el("mx").innerHTML=h;
+  const none=allSrc().filter(i=>i.lv==="none").length;
+  el("mx").setAttribute("aria-description",none?`미평가 ${none}건은 매트릭스에서 빠졌습니다.`:"");
+}
+function renderProgress(){
+  const ids=allSrc().map(i=>i.id).filter(id=>ASSESS[id]);let n=0,ok=0,gap=0,na=0;
+  ids.forEach(id=>{const p=progress(id);n+=p.n;ok+=p.ok;gap+=p.gap;na+=p.na});
+  const pct=v=>n?(v/n*100).toFixed(2)+"%":"0";
+  el("pbar").innerHTML=`<span class="b-ok" style="width:${pct(ok)}"></span><span class="b-gap" style="width:${pct(gap)}"></span><span class="b-na" style="width:${pct(na)}"></span>`;
+  el("plegend").innerHTML=`<span>질문 ${n}개</span><span><i style="background:var(--low)"></i>이상 없음 ${ok}</span><span><i style="background:var(--high)"></i>보완 필요 ${gap}</span><span><i style="background:var(--none)"></i>해당 없음 ${na}</span><span>미점검 ${n-ok-gap-na}</span>`;
+  el("dbnote").textContent=rt.note;
+  el("risk-sum").innerHTML=mix(allSrc())+`<span>점검 ${ok+gap+na}/${n}${gap?` · 보완 필요 ${gap}`:""}</span>`;
+}
+function open(sec,filter,scroll){
+  state.sec=sec;state.filter=filter||"전체";
+  let all,title,desc;
+  if(sec==="matrix"){
+    const [s,l]=state.cell.split("-").map(Number);
+    all=allSrc().filter(i=>i.s===s&&i.l===l);
+    title=`위험 매트릭스 · 심각도 ${s} ${SN[s]} × 발생가능성 ${l} ${LN[l]} · ${all.length}건`;
+    desc=`점수 ${s*l}, ${LV[lvOf(s*l)].n} 등급 항목입니다. 다른 칸을 누르거나 위 숫자 타일을 누르면 바뀝니다.`;
+  }else{
+    const d=DATA[sec];all=visible(sec);title=`${d.title} · ${all.length}건`;desc=d.desc;
+  }
+  document.querySelectorAll(".tile").forEach(t=>t.classList.toggle("on",t.dataset.sec===sec));
+  el("p-title").textContent=title;
+  el("p-desc").textContent=desc+(state.sort==="risk"?" 위험도가 높은 순으로 표시합니다.":" 최신 일자 순으로 표시합니다.");
+  const opts=["전체",...LVORDER.filter(k=>all.some(i=>i.lv===k)).map(k=>LV[k].n)];
+  if(!opts.includes(state.filter))state.filter="전체";
+  el("filters").innerHTML=`<div class="chips" role="group" aria-label="등급">${opts.map(o=>`<button class="chip" aria-pressed="${o===state.filter}" data-f="${esc(o)}">${esc(o)}</button>`).join("")}</div>
+    <div class="sortrow" role="group" aria-label="정렬"><span>정렬</span><button class="chip" data-sort="date" aria-pressed="${state.sort==="date"}">최신순</button><button class="chip" data-sort="risk" aria-pressed="${state.sort==="risk"}">위험도순</button></div>`;
+  const list=all.filter(i=>state.filter==="전체"||LV[i.lv].n===state.filter).sort(state.sort==="risk"?byRisk:byDate);
+  el("list").innerHTML=list.length?list.map(renderItem).join(""):`<p class="empty">조회 기간에 해당하는 항목이 없습니다. 기간을 넓혀 다시 조회해 보세요.</p>`;
+  if(sec!=="matrix")try{history.replaceState(null,"","#"+sec)}catch(e){}
+  renderMatrix();
+  if(scroll)el("panel").scrollIntoView({behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth",block:"start"});
+  resolveWho();
+}
+function refresh(){
+  const a=document.activeElement;
+  if(a&&a.matches&&a.matches("#list textarea, #list select")){refresh.pending=true;return}
+  refresh.pending=false;renderTiles();renderProgress();open(state.sec,state.filter,false);
+}
+async function resolveWho(){
+  if(!rt.user)return;const nodes=[...document.querySelectorAll("[data-who]")].filter(n=>n.dataset.who);
+  const ids=[...new Set(nodes.map(n=>n.dataset.who))];if(!ids.length)return;
+  try{const ps=await rt.user.profiles(ids);nodes.forEach(n=>{const p=ps[n.dataset.who];if(p&&p.name&&!n.dataset.named){n.dataset.named="1";n.textContent+=" · "+p.name}})}catch(e){}
+}
+function applyRange(f,t){
+  const msg=el("q-msg");
+  if(!f||!t){msg.textContent="시작일과 종료일을 모두 입력하세요.";msg.className="qmsg err";return}
+  if(f>t){msg.textContent="시작일이 종료일보다 늦습니다. 날짜를 바꿔 다시 조회하세요.";msg.className="qmsg err";return}
+  state.from=f;state.to=t;if(state.sec==="matrix"){state.sec="sanctions";state.cell=null}
+  renderTiles();renderProgress();open(state.sec,state.filter,false);
+  const total=SRC.reduce((n,k)=>n+visible(k).length,0);
+  msg.className="qmsg";msg.textContent=`${f.replace(/-/g,".")} ~ ${t.replace(/-/g,".")} 조회 결과 ${total}건 (보관 자료 ${DATA_FROM.replace(/-/g,".")} 이후)`;
+}
+/* 점검 기록 저장: 항목마다 한 번에 한 건씩 씁니다 */
+const queue={};
+function save(id,patch){
+  if(!canWrite())return;
+  const cur=chk[id]||{a:{},s:null,l:null,note:""};
+  const next={a:{...(cur.a||{})},s:cur.s??null,l:cur.l??null,note:cur.note||"",...patch,by:rt.uid||null,at:new Date().toISOString()};
+  if(patch.a)next.a=patch.a;
+  chk[id]=next;delete rt.err[id];refresh();
+  queue[id]=(queue[id]||Promise.resolve()).then(()=>rt.db.collection("checks").doc(id).set(next)).catch(e=>{
+    if(e&&e.code==="invalid_argument"){rt.writable=false;rt.note="이 페이지에서 점검 기록을 저장할 권한이 없습니다. 보기만 할 수 있습니다."}
+    else if(e&&e.code==="quota_exceeded"){rt.err[id]="저장 공간이 가득 차 기록하지 못했습니다."}
+    else rt.err[id]="저장하지 못했습니다. 잠시 뒤 다시 눌러 주세요.";
+    refresh();
+  });
+}
+ORDER.forEach(k=>el("n-"+k).addEventListener("click",()=>{state.cell=null;open(k,"전체",true)}));
+el("mx").addEventListener("click",e=>{const b=e.target.closest(".cell.has");if(!b)return;state.cell=b.dataset.cell;open("matrix","전체",true)});
+el("query").addEventListener("submit",e=>{e.preventDefault();applyRange(el("q-from").value,el("q-to").value)});
+el("q-reset").addEventListener("click",()=>{const [f,t]=defaultRange();el("q-from").value=f;el("q-to").value=t;applyRange(f,t)});
+el("filters").addEventListener("click",e=>{const b=e.target.closest(".chip");if(!b)return;if(b.dataset.sort){state.sort=b.dataset.sort;open(state.sec,state.filter,false)}else open(state.sec,b.dataset.f,false)});
+el("list").addEventListener("toggle",e=>{const d=e.target;if(!d.matches||!d.matches("details.chk"))return;d.open?openSet.add(d.dataset.id):openSet.delete(d.dataset.id)},true);
+el("list").addEventListener("click",e=>{
+  const st=e.target.closest(".seg button");
+  if(st){const id=st.dataset.id,q=st.dataset.q,v=st.dataset.st;const a={...((chk[id]||{}).a||{})};if(a[q]===v)delete a[q];else a[q]=v;save(id,{a});return}
+  const b=e.target.closest(".ref");if(!b)return;const id=b.dataset.ref;state.cell=null;open(findSec(id),"전체",false);const t=el("it-"+id);if(t){t.scrollIntoView({behavior:"smooth",block:"center"});t.classList.add("flash");setTimeout(()=>t.classList.remove("flash"),1600)}
+});
+el("list").addEventListener("change",e=>{
+  const s=e.target.closest("select[data-adj]");
+  if(s){const v=s.value?Number(s.value):null;save(s.dataset.id,{[s.dataset.adj]:v});return}
+  const t=e.target.closest("textarea[data-note]");
+  if(t){const id=t.dataset.note;if((chk[id]||{}).note!==t.value)save(id,{note:t.value.slice(0,2000)})}
+});
+el("list").addEventListener("focusout",()=>{setTimeout(()=>{if(refresh.pending)refresh()},0)});
+el("crit-s").innerHTML=[5,4,3,2,1].map(n=>`<tr><td class="n">${n} ${SN[n]}</td><td>${SDEF[n]}</td></tr>`).join("");
+const rw=el("riskwrap");try{if(localStorage.getItem("riskOpen")==="1")rw.open=true}catch(e){}
+const rwh=()=>{rw.querySelector(".rw-h").textContent=rw.open?"접기":"펼치기"};rwh();
+rw.addEventListener("toggle",()=>{rwh();try{localStorage.setItem("riskOpen",rw.open?"1":"0")}catch(e){}});
+el("crit-l").innerHTML=[5,4,3,2,1].map(n=>`<tr><td class="n">${n} ${LN[n]}</td><td>${LDEF[n]}</td></tr>`).join("");
+el("updated").textContent=UPDATED;
+rt.note="점검 기록 저장 기능을 불러오는 중입니다.";
+const [df,dt]=defaultRange();el("q-from").value=df;el("q-to").value=dt;state.from=df;state.to=dt;
+/* 링크 끝의 #sanctions 같은 섹션 이름이나 #S6 같은 항목 번호로 바로 엽니다 */
+const h=(location.hash||"").slice(1);const hs=ORDER.includes(h)?null:findSec(h);
+state.sec=ORDER.includes(h)?h:(hs||"sanctions");
+let startFrom=df;
+if(hs&&hs!=="actions"){const it=DATA[hs].items.find(i=>i.id===h);if(it&&it.date<df&&!(it.until&&it.until>=df))startFrom=it.date}
+if(hs==="actions"){const a=DATA.actions.items.find(i=>i.id===h);if(a){const ds=a.links.map(l=>{const s=findSec(l);const x=s&&DATA[s].items.find(i=>i.id===l);return x?x.date:""}).filter(Boolean).sort();if(ds.length&&ds[ds.length-1]<df)startFrom=ds[ds.length-1]}}
+if(startFrom!==df){el("q-from").value=startFrom;state.from=startFrom}
+applyRange(state.from,dt);
+if(hs){const t=el("it-"+h);if(t){openSet.add(h);open(state.sec,"전체",false);const t2=el("it-"+h);setTimeout(()=>{t2.scrollIntoView({block:"start"});t2.classList.add("flash");setTimeout(()=>t2.classList.remove("flash"),2400)},60)}}
+/* 공유 점검 기록 연결 */
+(async()=>{
+  const cl=window.claude;
+  if(!cl||!cl.use){rt.note="점검 기록은 claude.ai에서 이 페이지를 열면 저장할 수 있습니다.";refresh();return}
+  try{
+    const [db,user]=await Promise.all([cl.use("db"),cl.use("user")]);
+    rt.db=db;rt.user=user;
+    if(!db){rt.note="지금 보기에서는 점검 기록을 불러올 수 없습니다. 내용만 볼 수 있습니다.";refresh();return}
+    rt.uid=user?await user.id():null;
+    const w=user?await user.can("data.write"):null;
+    rt.writable=w!==false;
+    rt.note=rt.writable?"점검 결과와 메모는 이 페이지를 보는 사람과 공유되고 자동 저장됩니다.":"보기 권한이라 점검 기록을 볼 수만 있습니다.";
+    db.collection("checks").onSnapshot(snap=>{
+      snap.docs.forEach(d=>{if(d.exists)chk[d.id]=d.data()});
+      snap.docChanges().forEach(c=>{if(c.type==="removed")delete chk[c.doc.id]});
+      refresh();
+    },err=>{rt.note="점검 기록 연결이 끊겼습니다. 페이지를 다시 열어 주세요.";rt.writable=false;refresh()});
+    refresh();
+  }catch(e){rt.note="점검 기록을 불러오지 못했습니다. 내용만 볼 수 있습니다.";refresh()}
+})();
+</script>
+
+
+</body></html>
